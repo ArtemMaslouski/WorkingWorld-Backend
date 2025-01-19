@@ -15,4 +15,9 @@ export class AuthController {
   async createEmployer(@Body() userDTO: UserDTO) {
     return this.authService.registerEmployer(userDTO);
   }
+
+  @Post('login')
+  async login(@Body() userDTO: UserDTO) {
+    return this.authService.login(userDTO);
+  }
 }
