@@ -21,4 +21,18 @@ export class AuthService {
             }
         })
     }
+
+    async registerEmployer(userDTO: UserDTO) {
+        const { Login, Password, Role = ROLES.EMPLOYER} = userDTO;
+
+        const hashedPassword = await bcrypt.hash(Password,10);
+
+        return this.prisma.user.create({
+            data: {
+                Login,
+                Password: hashedPassword,
+                Role
+            }
+        })
+    }
 }
