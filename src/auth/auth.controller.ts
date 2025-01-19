@@ -2,6 +2,8 @@ import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDTO } from 'src/DTO/UserDTO';
 import { AuthGuard } from './guards/auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator'
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +24,11 @@ export class AuthController {
     return this.authService.login(userDTO);
   }
 
-  @UseGuards(AuthGuard)
   @Get('test')
-  async test() {
+  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles('user')
+   test() {
     return 'Hello World'
   }
 }
