@@ -4,10 +4,11 @@ import { ROLES }  from '../enums/roles.enums'
 import * as bcrypt from 'bcrypt'
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma:PrismaService, private jwtService: JwtService ){}
+    constructor(private prisma:PrismaService, private jwtService: JwtService, private mailerService: MailerService  ){}
 
     async registerUser(userDTO: UserDTO ){
         const { Login, Password, Role = ROLES.USER} = userDTO;
@@ -73,5 +74,20 @@ export class AuthService {
                 expiresIn: '30d',
             })
         }
+    }
+
+    async sendEmail(email: string) {
+        const code = Math.floor(10000 + Math.random() * 900000).toString()
+        console.log(code)
+        await this.mailerService.sendMail({
+            to: email,
+            subject: 'Восстановление пароля',
+            template: './src/auth/template/reset-password',
+            context: {
+                data: {
+                    code,
+                }
+            }
+        });
     }
 }

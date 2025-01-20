@@ -5,6 +5,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator'
 
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -30,5 +31,13 @@ export class AuthController {
   @Roles('user')
    test() {
     return 'Hello World'
+  }
+
+  @Post('send')
+  async sendMail(@Body() body: {email:string}) {
+    const { email } = body;
+
+    await this.authService.sendEmail(email);
+    return { success: true}
   }
 }
