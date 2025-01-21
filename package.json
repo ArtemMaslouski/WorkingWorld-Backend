@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start:dev": "nest start --watch"
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

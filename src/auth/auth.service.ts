@@ -90,4 +90,8 @@ export class AuthService {
             }
         });
     }
+
+    async getUsers() {
+        return await this.prisma.user.findMany();
+    }
 }

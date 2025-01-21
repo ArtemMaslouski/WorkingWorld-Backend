@@ -40,4 +40,9 @@ export class AuthController {
     await this.authService.sendEmail(email);
     return { success: true}
   }
+
+  @Get('get-users')
+  async getUsers() {
+    return this.authService.getUsers()
+  }
 }
