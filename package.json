@@ -3,7 +3,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "build": "npx @nestjs/cli build"
+    "build": "npm cache clean --force && npm install && npx @nestjs/cli build"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -18,7 +18,8 @@
     "bcrypt": "^5.1.1",
     "class-validator": "^0.14.1",
     "ejs": "^3.1.10",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "@types/node": "^20.8.0"
   },
   "engines": {
     "node": "20.8.0"
