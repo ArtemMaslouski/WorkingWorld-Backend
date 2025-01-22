@@ -3,7 +3,8 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "build": "npm cache clean --force && npm install && npx @nestjs/cli build"
+    "build": "npm cache clean --force && npm install && npx @nestjs/cli build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -21,6 +22,9 @@
     "nodemailer": "^6.9.16",
     "@types/node": "^20.8.0"
   },
+  "devDependencies": {
+    "prisma": "^6.2.1"
+  }
   "engines": {
     "node": "20.8.0"
   }
