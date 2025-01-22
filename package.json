@@ -25,6 +25,7 @@
   "devDependencies": {
     "prisma": "^6.2.1"
   },
+
   "engines": {
     "node": "20.8.0"
   }
