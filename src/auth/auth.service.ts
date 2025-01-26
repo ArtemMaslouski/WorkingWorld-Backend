@@ -94,4 +94,30 @@ export class AuthService {
     async getUsers() {
         return await this.prisma.user.findMany();
     }
+
+    async refreshTokens(refreshToken: string) {
+        try{
+            const payload =  await this.jwtService.verify(refreshToken,{
+                secret: process.env.SECRET_KEY_REFRESH_TOKEN,
+            })
+
+            const newAccessToken = await this.jwtService.sign({payload},{
+                secret: process.env.SECRET_KEY_ACCESS_TOKEN,
+                expiresIn: '15m'
+            })
+
+            const newRefreshToken = this.jwtService.sign({payload},{
+                secret: process.env.SECRET_KEY_REFRESH_TOKEN,
+                expiresIn: '7d'
+            });
+
+            return {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+            }
+        } catch {
+            throw new Error("Ошибка генерации токена")
+        }
+            
+    }
 }

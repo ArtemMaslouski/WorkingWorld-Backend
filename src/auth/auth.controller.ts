@@ -25,6 +25,11 @@ export class AuthController {
     return this.authService.login(userDTO);
   }
 
+  @Post('refresh')
+  async refreshTokens(@Body('refreshToken') token: string){
+    return this.authService.refreshTokens(token);
+  }
+
   @Get('test')
   @UseGuards(AuthGuard)
   @UseGuards(RolesGuard)
@@ -46,3 +51,4 @@ export class AuthController {
     return this.authService.getUsers()
   }
 }
+ 
