@@ -78,15 +78,15 @@ export class AuthService {
 
     async sendEmail(email: string) {
         const code = Math.floor(10000 + Math.random() * 900000).toString()
+        const test = 'test'
         console.log(code)
-        await this.mailerService.sendMail({
+         await this.mailerService.sendMail({
             to: email,
             subject: 'Восстановление пароля',
-            template: './src/auth/template/reset-password',
+            template: './src/auth/template/reset-password.ejs',
             context: {
-                data: {
-                    code,
-                }
+                test,
+                code
             }
         });
     }

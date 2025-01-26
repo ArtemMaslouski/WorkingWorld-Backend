@@ -23,7 +23,7 @@ import { EjsAdapter} from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
       template: {
         adapter: new EjsAdapter(),
         options: {
-          strict: true,
+          strict: false,
         }
       }
     }),
