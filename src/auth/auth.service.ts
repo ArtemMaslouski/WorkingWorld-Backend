@@ -1,48 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
 import { UserDTO } from '../DTO/UserDTO';
-import { ROLES }  from '../enums/roles.enums'
 import * as bcrypt from 'bcrypt'
+import * as crypto from 'crypto'
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { Response } from 'express'
 
 @Injectable()
 export class AuthService {
     constructor(private prisma:PrismaService, private jwtService: JwtService, private mailerService: MailerService  ){}
 
     async registerUser(userDTO: UserDTO ){
-        const { Login, Password, Role = ROLES.USER} = userDTO;
+        const { UserName, TelephoneNumber ,Password } = userDTO;
 
         const hashedPassword = await bcrypt.hash(Password,10);
         
         return this.prisma.user.create({
             data: {
-                Login,
+                UserName: UserName,
+                TelephoneNumber: TelephoneNumber,
                 Password: hashedPassword,
-                Role,
+
             }
         })
     }
 
-    async registerEmployer(userDTO: UserDTO) {
-        const { Login, Password, Role = ROLES.EMPLOYER} = userDTO;
 
-        const hashedPassword = await bcrypt.hash(Password,10);
-
-        return this.prisma.user.create({
-            data: {
-                Login,
-                Password: hashedPassword,
-                Role
-            }
-        })
-    }
-
-    async login(userDTO: UserDTO) {
-        const { Login, Password, Role} = userDTO;
+    async login(userDTO: UserDTO,@Res() res: Response) {
+        const { UserName, Password} = userDTO;
         const user = await this.prisma.user.findUnique({
             where: {
-                Login: Login,
+                UserName: UserName,
             }
         })
 
@@ -57,41 +46,53 @@ export class AuthService {
         }
 
 
-        return this.createToken(user)
+        return this.createToken(user,res)
     }
 
-    async createToken(user) {
-        const payload = { sub: user.id, Login: user.Login, Role: user.Role}
+    async createToken(user, @Res() res: Response) {
+        const payload = { sub: user.id, UserName: user.UserName, TelephoneNumber: user.TelephoneNumber}
+        
+        const access_token = this.jwtService.sign(payload, {
+            secret: process.env.SECRET_KEY_ACCESS_TOKEN,
+            expiresIn: '30m'
+        })
+        
 
-        return {
-            access_token: this.jwtService.sign(payload, {
-                secret: process.env.SECRET_KEY_ACCESS_TOKEN,
-                expiresIn: '30m',
-            }),
+        res.cookie('access_token',access_token,{
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',
+            maxAge: 30 * 60 * 100
+        })
 
-            refresh_token: this.jwtService.sign(payload, {
-                secret: process.env.SECRET_KEY_REFRESH_TOKEN,
-                expiresIn: '30d',
-            })
-        }
-    }
+        const refresh_token = this.jwtService.sign(payload,{
+            secret: process.env.SECRET_KEY_REFRESH_TOKEN,
+            expiresIn: '30d',
+        })
 
-    async sendEmail(email: string) {
-        const code = Math.floor(10000 + Math.random() * 900000).toString()
-        const test = 'test'
-        console.log(code)
-         await this.mailerService.sendMail({
-            to: email,
-            subject: 'Восстановление пароля',
-            template: './src/auth/template/reset-password.ejs',
-            context: {
-                test,
-                code
-            }
-        });
+        res.cookie('refresh_token', refresh_token,{
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        })
+
+
+        return res.send({
+            access_token: access_token,
+            refresh_token: refresh_token,
+        })
     }
 
     async getUsers() {
         return await this.prisma.user.findMany();
+    }
+
+    async deleteUser(UserName: string) {
+        return await this.prisma.user.delete({
+            where: {
+                UserName: UserName
+            }
+        })
     }
 }

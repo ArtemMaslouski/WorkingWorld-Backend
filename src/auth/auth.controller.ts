@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param, Delete, Req, Res } from '@nestjs/common';
+import { Request,Response } from 'express'
 import { AuthService } from './auth.service';
 import { UserDTO } from 'src/DTO/UserDTO';
 import { AuthGuard } from './guards/auth.guard';
@@ -15,34 +16,35 @@ export class AuthController {
     return this.authService.registerUser(userDTO);
   }
 
-  @Post('create-employer')
-  async createEmployer(@Body() userDTO: UserDTO) {
-    return this.authService.registerEmployer(userDTO);
-  }
-
   @Post('login')
-  async login(@Body() userDTO: UserDTO) {
-    return this.authService.login(userDTO);
+  async login(@Body() userDTO: UserDTO,@Res() res: Response) {
+    return this.authService.login(userDTO,res);
   }
 
   @Get('test')
   @UseGuards(AuthGuard)
   @UseGuards(RolesGuard)
-  @Roles('user')
    test() {
     return 'Hello World'
-  }
-
-  @Post('send')
-  async sendMail(@Body() body: {email:string}) {
-    const { email } = body;
-
-    await this.authService.sendEmail(email);
-    return { success: true}
   }
 
   @Get('get-users')
   async getUsers() {
     return this.authService.getUsers()
   }
+
+  @Delete('delete-users')
+  async deleteUsers(@Body('Login') Login: string) {
+    return this.authService.deleteUser(Login)
+  }
+
+  @Get('set-cookie')
+  setCookie(@Res({ passthrough:true }) response: Response) {
+    response.cookie('key','value');
+  }
+  @Get('get-cookie')
+  getCookie(@Req() request: Request) {
+    console.log(request.cookies)
+  }
+
 }
