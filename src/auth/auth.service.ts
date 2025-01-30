@@ -6,20 +6,21 @@ import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Response } from 'express'
+import { addMinutes } from 'date-fns'
 
 @Injectable()
 export class AuthService {
     constructor(private prisma:PrismaService, private jwtService: JwtService, private mailerService: MailerService  ){}
 
     async registerUser(userDTO: UserDTO ){
-        const { UserName, TelephoneNumber ,Password } = userDTO;
+        const { UserName, Email ,Password } = userDTO;
 
         const hashedPassword = await bcrypt.hash(Password,10);
         
         return this.prisma.user.create({
             data: {
                 UserName: UserName,
-                TelephoneNumber: TelephoneNumber,
+                Email: Email,
                 Password: hashedPassword,
 
             }
@@ -95,4 +96,34 @@ export class AuthService {
             }
         })
     }
+
+    async sendVerificationEmail(email: string) {
+        const code = Math.floor(10000 + Math.random() * 900000).toString()
+
+        await this.mailerService.sendMail({
+            to: email,
+            subject: 'Восстановление пароля',
+            template: './src/auth/template/reset-password.ejs',
+            context: {
+                code,
+            }
+        })
+        console.log(email);
+        console.log(code)
+        await this.prisma.user.update({
+            where: {
+                Email: email,
+            },
+            data: {
+                ResetCode: code,
+                ResetCodeExpires: addMinutes(new Date(), 15),
+            }
+        })
+
+        return {
+            message: "Сообщение отправлено успешно"
+        }
+
+    }
+
 }
