@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { UserDTO } from 'src/DTO/UserDTO';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { Roles } from './decorators/roles.decorator'
 
 
 @Controller('auth')
@@ -48,5 +47,9 @@ export class AuthController {
     console.log(request.cookies)
   }
 
+  @Post('send') 
+  async sendMail(@Body('Email') email: string) {
+    return await this.authService.sendVerificationEmail(email)
+  }
 }
  
