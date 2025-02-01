@@ -14,8 +14,10 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  Login    String @unique
-  Password String
-  Role     String
+  id               Int       @id @default(autoincrement())
+  UserName         String    @unique
+  Email            String    @unique
+  Password         String
+  ResetCode        String?
+  ResetCodeExpires DateTime?
 }
