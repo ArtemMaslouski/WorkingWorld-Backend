@@ -51,4 +51,10 @@ export class AuthController {
   async sendMail(@Body('Email') email: string) {
     return await this.authService.sendVerificationEmail(email)
   }
+
+  @Post('forgotPassword')
+  async forgotPassword(@Body('Code') code: string,@Body('Email') email: string){
+    return await this.authService.verificateCode(code,email)
+  }
+
 }

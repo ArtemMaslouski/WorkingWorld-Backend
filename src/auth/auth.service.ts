@@ -108,8 +108,6 @@ export class AuthService {
                 code,
             }
         })
-        console.log(email);
-        console.log(code)
         await this.prisma.user.update({
             where: {
                 Email: email,
@@ -124,6 +122,21 @@ export class AuthService {
             message: "Сообщение отправлено успешно"
         }
 
+    }
+
+    async verificateCode(code: string,email: string) {
+        const user = await this.prisma.user.findFirst({
+            where: {
+                Email: email
+            },
+
+        })
+
+        if(!user){
+            throw new Error("Данного пользователя не существует")
+        }
+
+        return code === user.ResetCode ? true : false
     }
 
 }
