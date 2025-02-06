@@ -97,7 +97,7 @@ export class AuthService {
         })
     }
 
-    async sendVerificationEmail(email: string) {
+    async sendVerificationCodeToEmail(email: string) {
         const code = Math.floor(10000 + Math.random() * 900000).toString()
 
         await this.mailerService.sendMail({
@@ -124,19 +124,37 @@ export class AuthService {
 
     }
 
-    async verificateCode(code: string,email: string) {
+    async verificateUserWithCodeFromEmail(code: string) {
+
         const user = await this.prisma.user.findFirst({
             where: {
-                Email: email
-            },
-
+                ResetCode: code,
+            }
         })
 
-        if(!user){
-            throw new Error("Данного пользователя не существует")
+        if(!user) {
+            throw new Error("Кода не существует")
         }
 
-        return code === user.ResetCode ? true : false
+        return user.ResetCode == code ? true : false;
+    }
+
+    async resetPassword(email:string, password:string) {
+       try{
+            const hashedPassword = await bcrypt.hash(password,10)
+            const updatedUser = await this.prisma.user.update({
+                where: {
+                    Email: email,
+                },
+                data: {
+                    Password: hashedPassword
+                }
+            })
+
+            return updatedUser
+       } catch{
+        throw new Error("Ошибка изменения пароля")
+       }
     }
 
 }

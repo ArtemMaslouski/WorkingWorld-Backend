@@ -4,9 +4,11 @@ import { AuthService } from './auth.service';
 import { UserDTO } from 'src/DTO/UserDTO';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -20,7 +22,7 @@ export class AuthController {
     return this.authService.login(userDTO,res);
   }
 
-
+  @ApiTags('test')
   @Get('test')
   @UseGuards(AuthGuard)
   @UseGuards(RolesGuard)
@@ -49,12 +51,17 @@ export class AuthController {
 
   @Post('send') 
   async sendMail(@Body('Email') email: string) {
-    return await this.authService.sendVerificationEmail(email)
+    return await this.authService.sendVerificationCodeToEmail(email)
   }
 
   @Post('forgotPassword')
-  async forgotPassword(@Body('Code') code: string,@Body('Email') email: string){
-    return await this.authService.verificateCode(code,email)
+  async forgotPassword(@Body('Code') code: string){
+    return await this.authService.verificateUserWithCodeFromEmail(code)
+  }
+
+  @Post('resetPassword')
+  async resetPassword(@Body('Email') email:string, @Body('Password') password: string ){
+    return this.authService.resetPassword(email,password)
   }
 
 }
