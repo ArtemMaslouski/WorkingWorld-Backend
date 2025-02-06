@@ -3,9 +3,9 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser'
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule,{cors: true});
 
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('Working World')
     .setDescription('This documentation is created for Frontend Developer, that can deal with backend using this document ')
@@ -15,7 +15,6 @@ async function bootstrap() {
 
     const documetnFactory = () => SwaggerModule.createDocument(app,config);
     SwaggerModule.setup('api',app,documetnFactory)
-
   app.use(cookieParser())
   await app.listen(process.env.PORT ?? 3000);
 }
