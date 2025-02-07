@@ -74,8 +74,8 @@ export class AuthController {
     summary: 'Проверка кода,высланного на почту'
   })
   @Post('forgotPassword')
-  async forgotPassword(@Body('Code') code: string){
-    return await this.authService.verificateUserWithCodeFromEmail(code)
+  async forgotPassword(@Body('Code') code: string,@Body('Email') email:string){
+    return await this.authService.verificateUserWithCodeFromEmail(code,email)
   }
 
   @ApiOperation({

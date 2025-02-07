@@ -46,7 +46,6 @@ export class AuthService {
             throw new Error("Неверный пароль");
         }
 
-
         return this.createToken(user,res)
     }
 
@@ -99,6 +98,7 @@ export class AuthService {
 
     async sendVerificationCodeToEmail(email: string) {
         const code = Math.floor(10000 + Math.random() * 900000).toString()
+        const hashedCode = await bcrypt.hash(code,10)
 
         await this.mailerService.sendMail({
             to: email,
@@ -113,7 +113,7 @@ export class AuthService {
                 Email: email,
             },
             data: {
-                ResetCode: code,
+                ResetCode: hashedCode,
                 ResetCodeExpires: addMinutes(new Date(), 15),
             }
         })
@@ -124,18 +124,18 @@ export class AuthService {
 
     }
 
-    async verificateUserWithCodeFromEmail(code: string) {
+    async verificateUserWithCodeFromEmail(code:string,email: string) {
 
         const user = await this.prisma.user.findFirst({
             where: {
-                ResetCode: code,
+                Email: email,
             }
         })
 
         if(!user) {
             throw new Error("Кода не существует")
         }
-        return user.ResetCode == code ? true : false;
+        return await bcrypt.compare(code,user.ResetCode) ? true : false;
     }
 
     async resetPassword(email:string, password:string) {
