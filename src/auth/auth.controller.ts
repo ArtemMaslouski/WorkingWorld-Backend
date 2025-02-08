@@ -26,8 +26,8 @@ export class AuthController {
     description: 'Функция позволяет пользователю зайти в аккаунт используя имя пользователя и пароль'
   })
   @Post('login')
-  async login(@Body() userDTO: UserDTO,@Res() res: Response) {
-    return this.authService.login(userDTO,res);
+  async login(@Body('Email') email: string,@Body('Password') password: string, @Res() res: Response) {
+    return this.authService.login(email,password,res);
   }
 
   @ApiTags('test')
@@ -48,8 +48,8 @@ export class AuthController {
     description: 'Функция позволяет удалить аккаунт по логину(возможно позже будем удалять по токену)'
   })
   @Delete('delete-users')
-  async deleteUsers(@Body('Login') Login: string) {
-    return this.authService.deleteUser(Login)
+  async deleteUsers(@Body('Id') id: number) {
+    return this.authService.deleteUser(id)
   }
 
   @Get('set-cookie')

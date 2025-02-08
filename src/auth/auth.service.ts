@@ -28,11 +28,10 @@ export class AuthService {
     }
 
 
-    async login(userDTO: UserDTO,@Res() res: Response) {
-        const { UserName, Password} = userDTO;
+    async login(email:string, password: string,@Res() res: Response) {
         const user = await this.prisma.user.findUnique({
             where: {
-                UserName: UserName,
+                Email: email
             }
         })
 
@@ -40,7 +39,7 @@ export class AuthService {
             throw new Error("Пользователя не существует");
         }
 
-        const isValidPassword = await bcrypt.compare(Password, user.Password);
+        const isValidPassword = await bcrypt.compare(password, user.Password);
 
         if(!isValidPassword) {
             throw new Error("Неверный пароль");
@@ -88,10 +87,10 @@ export class AuthService {
         return await this.prisma.user.findMany();
     }
 
-    async deleteUser(UserName: string) {
+    async deleteUser(id: number) {
         return await this.prisma.user.delete({
             where: {
-                UserName: UserName
+                id: id
             }
         })
     }
