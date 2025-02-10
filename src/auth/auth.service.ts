@@ -108,8 +108,6 @@ export class AuthService {
                 code,
             }
         })
-        console.log(email);
-        console.log(code)
         await this.prisma.user.update({
             where: {
                 Email: email,
