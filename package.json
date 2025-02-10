@@ -7,30 +7,30 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@nestjs/cli": "^11.0.0",
     "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/cli": "^11.0.0",
     "@nestjs/common": "^11.0.6",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^5.0.1",
     "@nestjs/swagger": "^11.0.0",
     "@prisma/client": "^6.2.1",
+    "@types/node": "^20.8.0",
     "bcrypt": "^5.1.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "date-fns": "^4.1.0",
     "ejs": "^3.1.10",
     "nodemailer": "^6.9.16",
-    "@types/node": "^20.8.0",
     "twilio": "^5.4.3"
   },
   "devDependencies": {
-    "prisma": "^6.2.1",
-    "@types/cookie-parser": "^1.4.8"
+    "@types/cookie-parser": "^1.4.8",
+    "prisma": "^6.2.1"
   },
   "engines": {
     "node": "20.8.0"
   }
-
 }

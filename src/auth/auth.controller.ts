@@ -1,10 +1,15 @@
 import { Controller, Post, Body, Get, UseGuards, Param, Delete, Req, Res } from '@nestjs/common';
 import { Request,Response } from 'express'
 import { AuthService } from './auth.service';
-import { UserDTO } from 'src/DTO/UserDTO';
+import { RegisterDTO } from 'src/DTO/RegisterDTO';
+import { LoginDTO } from 'src/DTO/LoginDTO'
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeleteDTO } from 'src/DTO/DeleteDTO';
+import { SendEmailDTO } from 'src/DTO/SendEmailDTO';
+import { VerificateCodeFromEmailDTO } from 'src/DTO/VerificateCodeFromEmailDTO';
+import { ResetPassword } from 'src/DTO/ResetPasswordDTO';
 
 
 @Controller('auth')
@@ -17,8 +22,8 @@ export class AuthController {
     description: 'Функция создает пользователя используя имя пользователя, электронную почту и пароль'
   })
   @Post('create-user')
-  async createUser(@Body() userDTO: UserDTO) {
-    return this.authService.registerUser(userDTO);
+  async createUser(@Body() registerDTO: RegisterDTO) {
+    return this.authService.registerUser(registerDTO);
   }
 
   @ApiOperation({
@@ -26,8 +31,8 @@ export class AuthController {
     description: 'Функция позволяет пользователю зайти в аккаунт используя имя пользователя и пароль'
   })
   @Post('login')
-  async login(@Body('Email') email: string,@Body('Password') password: string, @Res() res: Response) {
-    return this.authService.login(email,password,res);
+  async login(@Body() loginDTO: LoginDTO,@Res() res: Response) {
+    return this.authService.login(loginDTO, res);
   }
 
   @ApiTags('test')
@@ -48,8 +53,8 @@ export class AuthController {
     description: 'Функция позволяет удалить аккаунт по логину(возможно позже будем удалять по токену)'
   })
   @Delete('delete-users')
-  async deleteUsers(@Body('Id') id: number) {
-    return this.authService.deleteUser(id)
+  async deleteUsers(@Body() deleteDTO: DeleteDTO) {
+    return this.authService.deleteUser(deleteDTO)
   }
 
   @Get('set-cookie')
@@ -66,16 +71,16 @@ export class AuthController {
     description: 'Функция позволяет отправить код подтверждения на почту,если пользователь забыл пароль'
   })
   @Post('send') 
-  async sendMail(@Body('Email') email: string) {
-    return await this.authService.sendVerificationCodeToEmail(email)
+  async sendMail(@Body() sendEmailDTO: SendEmailDTO) {
+    return await this.authService.sendVerificationCodeToEmail(sendEmailDTO)
   }
 
   @ApiOperation({
     summary: 'Проверка кода,высланного на почту'
   })
   @Post('forgotPassword')
-  async forgotPassword(@Body('Code') code: string,@Body('Email') email:string){
-    return await this.authService.verificateUserWithCodeFromEmail(code,email)
+  async forgotPassword(@Body() verificateDTO: VerificateCodeFromEmailDTO){
+    return await this.authService.verificateUserWithCodeFromEmail(verificateDTO)
   }
 
   @ApiOperation({
@@ -83,8 +88,8 @@ export class AuthController {
     description: 'Функция позволяет создать новый пароль, вместо старого забытого'
   })
   @Post('resetPassword')
-  async resetPassword(@Body('Email') email:string, @Body('Password') password: string ){
-    return this.authService.resetPassword(email,password)
+  async resetPassword(@Body() resetPassword: ResetPassword){
+    return this.authService.resetPassword(resetPassword)
   }
 
 }

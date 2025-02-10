@@ -1,5 +1,5 @@
 import { Injectable, Res } from '@nestjs/common';
-import { UserDTO } from '../DTO/UserDTO';
+import { RegisterDTO } from '../DTO/RegisterDTO';
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
 import { PrismaService } from '../prisma.service';
@@ -7,13 +7,19 @@ import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Response } from 'express'
 import { addMinutes } from 'date-fns'
+import { Cron } from '@nestjs/schedule'
+import { LoginDTO } from 'src/DTO/LoginDTO';
+import { DeleteDTO } from 'src/DTO/DeleteDTO';
+import { SendEmailDTO } from 'src/DTO/SendEmailDTO';
+import { VerificateCodeFromEmailDTO } from '../DTO/VerificateCodeFromEmailDTO';
+import { ResetPassword } from 'src/DTO/ResetPasswordDTO';
 
 @Injectable()
 export class AuthService {
     constructor(private prisma:PrismaService, private jwtService: JwtService, private mailerService: MailerService  ){}
 
-    async registerUser(userDTO: UserDTO ){
-        const { UserName, Email ,Password } = userDTO;
+    async registerUser(registerDTO: RegisterDTO ){
+        const { UserName, Email ,Password } = registerDTO;
 
         const hashedPassword = await bcrypt.hash(Password,10);
         
@@ -28,10 +34,11 @@ export class AuthService {
     }
 
 
-    async login(email:string, password: string,@Res() res: Response) {
+    async login(loginDTO: LoginDTO, @Res() res: Response) {
+        const { Email, Password } = loginDTO
         const user = await this.prisma.user.findUnique({
             where: {
-                Email: email
+                Email: Email
             }
         })
 
@@ -39,7 +46,7 @@ export class AuthService {
             throw new Error("Пользователя не существует");
         }
 
-        const isValidPassword = await bcrypt.compare(password, user.Password);
+        const isValidPassword = await bcrypt.compare(Password, user.Password);
 
         if(!isValidPassword) {
             throw new Error("Неверный пароль");
@@ -87,7 +94,8 @@ export class AuthService {
         return await this.prisma.user.findMany();
     }
 
-    async deleteUser(id: number) {
+    async deleteUser(deleteDTO: DeleteDTO) {
+        const { id } = deleteDTO
         return await this.prisma.user.delete({
             where: {
                 id: id
@@ -95,12 +103,13 @@ export class AuthService {
         })
     }
 
-    async sendVerificationCodeToEmail(email: string) {
+    async sendVerificationCodeToEmail(sendEmailDTO: SendEmailDTO) {
+        const { Email } = sendEmailDTO
         const code = Math.floor(10000 + Math.random() * 900000).toString()
         const hashedCode = await bcrypt.hash(code,10)
 
         await this.mailerService.sendMail({
-            to: email,
+            to: Email,
             subject: 'Восстановление пароля',
             template: './src/auth/template/reset-password.ejs',
             context: {
@@ -109,7 +118,7 @@ export class AuthService {
         })
         await this.prisma.user.update({
             where: {
-                Email: email,
+                Email: Email,
             },
             data: {
                 ResetCode: hashedCode,
@@ -123,26 +132,28 @@ export class AuthService {
 
     }
 
-    async verificateUserWithCodeFromEmail(code:string,email: string) {
+    async verificateUserWithCodeFromEmail(verificateDTO: VerificateCodeFromEmailDTO) {
 
+        const { Code, Email } = verificateDTO
         const user = await this.prisma.user.findFirst({
             where: {
-                Email: email,
+                Email: Email,
             }
         })
 
         if(!user) {
             throw new Error("Кода не существует")
         }
-        return await bcrypt.compare(code,user.ResetCode) ? true : false;
+        return await bcrypt.compare(Code,user.ResetCode) ? true : false;
     }
 
-    async resetPassword(email:string, password:string) {
+    async resetPassword(resetPassword: ResetPassword) {
+        const { Email, Password } = resetPassword
        try{
-            const hashedPassword = await bcrypt.hash(password,10)
+            const hashedPassword = await bcrypt.hash(Password,10)
             const updatedUser = await this.prisma.user.update({
                 where: {
-                    Email: email,
+                    Email: Email,
                 },
                 data: {
                     Password: hashedPassword
@@ -153,6 +164,24 @@ export class AuthService {
        } catch{
         throw new Error("Ошибка изменения пароля")
        }
+    }
+
+    @Cron('*/5 * * * *')
+    async resetCode() {
+        const now = new Date()
+
+
+        return this.prisma.user.updateMany({
+            where: {
+                ResetCodeExpires: {
+                    lte: now
+                }
+            },
+            data: {
+                ResetCode: null,
+                ResetCodeExpires:null
+            }
+        })
     }
 
 }
