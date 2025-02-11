@@ -19,18 +19,22 @@ export class AuthService {
     constructor(private prisma:PrismaService, private jwtService: JwtService, private mailerService: MailerService  ){}
 
     async registerUser(registerDTO: RegisterDTO ){
-        const { UserName, Email ,Password } = registerDTO;
+        try{
+            const { UserName, Email ,Password } = registerDTO;
 
-        const hashedPassword = await bcrypt.hash(Password,10);
+            const hashedPassword = await bcrypt.hash(Password,10);
         
-        return this.prisma.user.create({
-            data: {
-                UserName: UserName,
-                Email: Email,
-                Password: hashedPassword,
+            return this.prisma.user.create({
+                data: {
+                    UserName: UserName,
+                    Email: Email,
+                    Password: hashedPassword,
 
-            }
-        })
+                }
+            })
+        } catch{
+            throw new Error("Во время регистрации произошла ошибка")
+        }
     }
 
 
@@ -95,18 +99,23 @@ export class AuthService {
     }
 
     async deleteUser(deleteDTO: DeleteDTO) {
-        const { id } = deleteDTO
-        return await this.prisma.user.delete({
-            where: {
-                id: id
-            }
-        })
+        try{
+            const { id } = deleteDTO
+            return await this.prisma.user.delete({
+                where: {
+                    id: id
+                }
+            })
+        } catch {
+            throw new Error("Ошибка удаления пользователя")
+        }
     }
 
     async sendVerificationCodeToEmail(sendEmailDTO: SendEmailDTO) {
-        const { Email } = sendEmailDTO
-        const code = Math.floor(10000 + Math.random() * 900000).toString()
-        const hashedCode = await bcrypt.hash(code,10)
+        try{
+            const { Email } = sendEmailDTO
+            const code = Math.floor(10000 + Math.random() * 900000).toString()
+            const hashedCode = await bcrypt.hash(code,10)
 
         await this.mailerService.sendMail({
             to: Email,
@@ -118,42 +127,50 @@ export class AuthService {
             }
         })
     
-        const deleted = await this.prisma.user.update({
-            where: {
-                Email: Email,
-            },
-            data: {
-                ResetCode: hashedCode,
-                ResetCodeExpires: addMinutes(new Date(), 15),
+            const deleted = await this.prisma.user.update({
+                where: {
+                    Email: Email,
+                },
+                data: {
+                    ResetCode: hashedCode,
+                    ResetCodeExpires: addMinutes(new Date(), 15),
+                }
+            })
+
+            if(!deleted) {
+                console.log("Удалять нечего")
             }
-        })
 
-        if(!deleted) {
-            console.log("Удалять нечего")
-        }
-
-        return {
-            message: "Сообщение отправлено успешно"
+            return {
+                message: "Сообщение отправлено успешно"
+            }
+        } catch {
+            throw new Error("Ошибка отправки сообщения")
         }
 
     }
 
     async verificateUserWithCodeFromEmail(verificateDTO: VerificateCodeFromEmailDTO) {
 
-        const { Code, Email } = verificateDTO
-        const user = await this.prisma.user.findFirst({
-            where: {
-                Email: Email,
+        try {
+            const { Code, Email } = verificateDTO
+            const user = await this.prisma.user.findFirst({
+                where: {
+                    Email: Email,
+                }
+            })
+    
+            if(!user) {
+                throw new Error("Кода не существует")
             }
-        })
-
-        if(!user) {
-            throw new Error("Кода не существует")
+            return await bcrypt.compare(Code,user.ResetCode) ? true : false;
+        } catch {
+            throw new Error("Ошибка верификации кода")
         }
-        return await bcrypt.compare(Code,user.ResetCode) ? true : false;
     }
 
     async resetPassword(resetPassword: ResetPassword) {
+
         const { Email, Password } = resetPassword
        try{
             const hashedPassword = await bcrypt.hash(Password,10)
