@@ -110,6 +110,7 @@ export class AuthService {
 
         await this.mailerService.sendMail({
             to: Email,
+            from: process.env.EMAIL_LOGIN,
             subject: 'Восстановление пароля',
             template: './src/auth/template/reset-password.ejs',
             context: {
