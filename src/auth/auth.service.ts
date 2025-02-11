@@ -116,7 +116,8 @@ export class AuthService {
                 code,
             }
         })
-        await this.prisma.user.update({
+    
+        const deleted = await this.prisma.user.update({
             where: {
                 Email: Email,
             },
@@ -125,6 +126,10 @@ export class AuthService {
                 ResetCodeExpires: addMinutes(new Date(), 15),
             }
         })
+
+        if(!deleted) {
+            console.log("Удалять нечего")
+        }
 
         return {
             message: "Сообщение отправлено успешно"
