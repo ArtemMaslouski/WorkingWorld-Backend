@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Param, Delete, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param, Delete, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { Request,Response } from 'express'
 import { AuthService } from './auth.service';
 import { RegisterDTO } from 'src/DTO/RegisterDTO';
@@ -10,6 +10,7 @@ import { DeleteDTO } from 'src/DTO/DeleteDTO';
 import { SendEmailDTO } from 'src/DTO/SendEmailDTO';
 import { VerificateCodeFromEmailDTO } from 'src/DTO/VerificateCodeFromEmailDTO';
 import { ResetPassword } from 'src/DTO/ResetPasswordDTO';
+import { RefreshJwtGuard } from './guards/refreshJwt.guard';
 
 
 @Controller('auth')
@@ -111,6 +112,17 @@ export class AuthController {
   @Post('resetPassword')
   async resetPassword(@Body() resetPassword: ResetPassword){
     return this.authService.resetPassword(resetPassword)
+  }
+
+  @UseGuards(RefreshJwtGuard)
+  @Post('refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const user = req['user'];
+    if(!user){
+      throw new UnauthorizedException()
+    }
+
+    return this.authService.createToken(user,res)
   }
 
 }
