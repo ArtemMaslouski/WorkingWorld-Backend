@@ -1,7 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { RegisterDTO } from '../DTO/RegisterDTO';
 import * as bcrypt from 'bcrypt'
-import * as crypto from 'crypto'
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -60,7 +59,7 @@ export class AuthService {
     }
 
     async createToken(user, @Res() res: Response) {
-        const payload = { sub: user.id, UserName: user.UserName, TelephoneNumber: user.TelephoneNumber}
+        const payload = { sub: user.id, UserName: user.UserName, Email: user.Email}
         
         const access_token = this.jwtService.sign(payload, {
             secret: process.env.SECRET_KEY_ACCESS_TOKEN,

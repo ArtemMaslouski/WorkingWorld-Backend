@@ -1,35 +1,29 @@
-import { CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Request } from 'express'
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { JwtService } from '@nestjs/jwt';
+import { RolesGuard } from "./roles.guard";
 
+@Injectable()
 export class RefreshJwtGuard implements CanActivate {
     constructor(private jwtService: JwtService) {}
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest()
-        const token = this.extractTokenFromHeader(request);
+    canActivate(context: ExecutionContext) {
+        const request = context.switchToHttp().getRequest();
+        const token = RolesGuard.extractTokenFromHeaders(request)
 
-        if(!token){
-            throw new UnauthorizedException('Токен не найден')
+        if(!token) {
+            throw new Error("Токен отсутствует")
         }
 
         try{
-            const payload = await this.jwtService.verify(token,{
+            const payload = this.jwtService.verify(token,{
                 secret: process.env.SECRET_KEY_REFRESH_TOKEN
-            });
+            })
+            request['user'] = payload
 
-            request['user'] = payload;
-        } catch {
-            throw new UnauthorizedException("Что-то пошло не так")
+        } catch(error){
+            console.log(error)
         }
 
-        return true
+        return true;
     }
-
-    private extractTokenFromHeader(request: Request) {
-        const [type, token] = request.headers.authorization.split(' ') ?? []
-
-        return type === 'Bearer' ? token : undefined
-    }
-
 }
