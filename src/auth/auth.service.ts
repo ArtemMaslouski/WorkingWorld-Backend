@@ -142,8 +142,9 @@ export class AuthService {
             return {
                 message: "Сообщение отправлено успешно"
             }
-        } catch {
-            throw new Error("Ошибка отправки сообщения")
+        } catch(error) {
+            // throw new Error("Ошибка отправки сообщения")
+            console.log(error)
         }
 
     }
