@@ -123,7 +123,14 @@ export class AuthService {
             template: './src/auth/template/reset-password.ejs',
             context: {
                 code,
-            }
+            },
+            attachments: [
+                {
+                    filename: 'logo.jpg',
+                    path: './src/auth/template/logo.jpg',
+                    cid: 'logo-for-email'
+                }
+            ]
         })
     
             const deleted = await this.prisma.user.update({

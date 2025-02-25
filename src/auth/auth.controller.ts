@@ -78,6 +78,7 @@ export class AuthController {
   @ApiResponse(SwaggerResponses.created)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
+  @ApiResponse(SwaggerResponses.badRequest)
   @Post('send') 
   async sendMail(@Body() sendEmailDTO: SendEmailDTO) {
     return await this.authService.sendVerificationCodeToEmail(sendEmailDTO)
