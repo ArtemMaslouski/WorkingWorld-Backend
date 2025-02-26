@@ -21,3 +21,13 @@ model User {
   ResetCode        String?
   ResetCodeExpires DateTime?
 }
+
+model Task {
+  id  Int       @id @default(autoincrement())
+  Title String 
+  Address String
+  BeginAt String
+  EndAt String
+  Description String
+  Cost String
+}
