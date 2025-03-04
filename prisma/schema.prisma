@@ -29,5 +29,5 @@ model Task {
   BeginAt String
   EndAt String
   Description String
-  Cost String
+  
 }
