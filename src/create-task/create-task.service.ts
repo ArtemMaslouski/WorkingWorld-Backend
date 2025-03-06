@@ -5,17 +5,23 @@ import { PrismaService } from '../prisma.service';
 @Injectable()
 export class CreateTaskService {
   constructor(private prisma: PrismaService) {}
+
   async createTask(@Body() createTaskDTO: createTaskDTO) {
-    const { Title, Address, BeginAt, EndAt, Description, Cost } = createTaskDTO;
+    const { Category, Subcategory, Address, BeginAt, EndAt, Description } =
+      createTaskDTO;
     return this.prisma.task.create({
       data: {
-        Title: Title,
+        Category: Category,
+        Subcategory: Subcategory,
         Address: Address,
         BeginAt: BeginAt,
         EndAt: EndAt,
         Description: Description,
-        Cost: Cost,
       },
     });
+  }
+
+  async getTasks() {
+    return await this.prisma.task.findMany();
   }
 }

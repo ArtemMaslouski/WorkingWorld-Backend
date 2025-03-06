@@ -24,7 +24,8 @@ model User {
 
 model Task {
   id  Int       @id @default(autoincrement())
-  Title String 
+  Category String @default("Uncategorized")
+  Subcategory String @default("None") 
   Address String
   BeginAt String
   EndAt String

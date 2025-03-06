@@ -4,8 +4,13 @@ import { ApiProperty } from '@nestjs/swagger';
 export class createTaskDTO {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Название задания' })
-  Title: string;
+  @ApiProperty({ description: 'Название категории' })
+  Category: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Название подкатегории' })
+  Subcategory: string;
 
   @IsString()
   @ApiProperty({ description: 'Адрес,нде надо выполнить задание' })
@@ -22,8 +27,4 @@ export class createTaskDTO {
   @IsString()
   @ApiProperty({ description: 'Описание задания' })
   Description?: string;
-
-  @IsString()
-  @ApiProperty({ description: 'Сумма за выполнение задания' })
-  Cost?: string;
 }
