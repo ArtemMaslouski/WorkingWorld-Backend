@@ -1,6 +1,7 @@
 import { Body, Injectable } from '@nestjs/common';
 import { createTaskDTO } from './DTO/create-task-DTO';
 import { PrismaService } from '../prisma.service';
+import { deleteTaskDTO } from './DTO/delete-task-DTO';
 
 @Injectable()
 export class CreateTaskService {
@@ -23,5 +24,15 @@ export class CreateTaskService {
 
   async getTasks() {
     return await this.prisma.task.findMany();
+  }
+
+  async deleteTask(@Body() deleteDTO: deleteTaskDTO) {
+    const { id } = deleteDTO;
+
+    return await this.prisma.task.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }

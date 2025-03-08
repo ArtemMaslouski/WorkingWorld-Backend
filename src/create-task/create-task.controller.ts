@@ -1,8 +1,9 @@
-import { Controller, Body, Post, Get } from '@nestjs/common';
+import { Controller, Body, Post, Get, Delete } from '@nestjs/common';
 import { createTaskDTO } from './DTO/create-task-DTO';
 import { CreateTaskService } from './create-task.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
+import { deleteTaskDTO } from './DTO/delete-task-DTO';
 
 @Controller('create-task')
 export class CreateTaskController {
@@ -31,5 +32,17 @@ export class CreateTaskController {
   @Get('get')
   async getTasks() {
     return this.createTaskService.getTasks();
+  }
+
+  @ApiOperation({
+    summary: 'Функция для удаления задания',
+    description: 'Функция позволяет удалить задания исходя из его id',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
+  @Delete('delete')
+  async deleteTask(@Body() deleteDTO: deleteTaskDTO) {
+    return this.createTaskService.deleteTask(deleteDTO);
   }
 }
