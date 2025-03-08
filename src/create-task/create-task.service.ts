@@ -35,4 +35,29 @@ export class CreateTaskService {
       },
     });
   }
+
+  async resetTaskData(id: number, resetData: createTaskDTO) {
+    const { Category, Subcategory, Address, BeginAt, EndAt, Description } =
+      resetData;
+
+    const task = await this.prisma.task.update({
+      where: {
+        id: id,
+      },
+      data: {
+        Category,
+        Subcategory,
+        Address,
+        BeginAt,
+        EndAt,
+        Description,
+      },
+    });
+
+    if (!task) {
+      throw new Error('Задания не существует');
+    }
+
+    return task;
+  }
 }

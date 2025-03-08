@@ -13,7 +13,7 @@ export class createTaskDTO {
   Subcategory: string;
 
   @IsString()
-  @ApiProperty({ description: 'Адрес,нде надо выполнить задание' })
+  @ApiProperty({ description: 'Адрес,где надо выполнить задание' })
   Address?: string;
 
   @IsString()
