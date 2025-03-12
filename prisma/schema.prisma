@@ -20,6 +20,8 @@ model User {
   Password         String
   ResetCode        String?
   ResetCodeExpires DateTime?
+  userInfo         UserInfo? @relation(fields: [userInfoId], references: [id])
+  userInfoId  Int? @unique
 }
 
 model Task {
@@ -31,4 +33,23 @@ model Task {
   EndAt String
   Description String
   
+}
+
+model UserInfo {
+  id Int @id @default(autoincrement())
+  Name String
+  Surname String
+  BirthdayDate DateTime
+  Sex Gender
+  City String
+  Email String
+  PhoneNumber String
+  Password String
+  user User?
+
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
