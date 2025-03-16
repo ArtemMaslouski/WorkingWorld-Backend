@@ -8,7 +8,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
 
-export class AddUserInfo {
+export class AddUserInfoDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: 'Имя пользователя' })
@@ -22,7 +22,7 @@ export class AddUserInfo {
   @IsDate()
   @IsNotEmpty()
   @ApiProperty({ description: 'Дата рождения' })
-  BirthdayDay: Date;
+  BirthdayDate: Date;
 
   @IsNotEmpty()
   @ApiProperty({ description: 'Пол пользователяы' })
@@ -37,14 +37,4 @@ export class AddUserInfo {
   @IsNotEmpty()
   @ApiProperty({ description: 'Электронная почта пользователя' })
   Email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Номер телефона пользователя' })
-  PhoneNumber: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Пароль пользователя' })
-  Password: string;
 }
