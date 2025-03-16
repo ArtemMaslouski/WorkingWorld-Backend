@@ -37,14 +37,13 @@ model Task {
 
 model UserInfo {
   id Int @id @default(autoincrement())
-  Name String
-  Surname String
-  BirthdayDate DateTime
-  Sex Gender
-  City String
-  Email String
-  PhoneNumber String
-  Password String
+  Name String?
+  Surname String?
+  BirthdayDate DateTime?
+  Sex Gender?
+  City String?
+  Email String?
+  PhoneNumber String?
   user User?
 
 }

@@ -1,10 +1,10 @@
-import { Injectable, Res } from '@nestjs/common';
+import { Injectable, Req, Res } from '@nestjs/common';
 import { RegisterDTO } from './DTO/RegisterDTO';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { addMinutes } from 'date-fns';
 import { Cron } from '@nestjs/schedule';
 import { LoginDTO } from 'src/auth/DTO/LoginDTO';
@@ -39,7 +39,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDTO: LoginDTO, @Res() res: Response) {
+  async login(loginDTO: LoginDTO, @Req() req: Request, @Res() res: Response) {
     const { Email, Password } = loginDTO;
     const user = await this.prisma.user.findUnique({
       where: {
@@ -57,10 +57,10 @@ export class AuthService {
       throw new Error('Неверный пароль');
     }
 
-    return this.createToken(user, res);
+    return this.createToken(user, req, res);
   }
 
-  async createToken(user, @Res() res: Response) {
+  async createToken(user, @Req() req: Request, @Res() res: Response) {
     const payload = {
       sub: user.id,
       UserName: user.UserName,
