@@ -44,7 +44,6 @@ model UserInfo {
   City String?
   Email String?
   PhoneNumber String?
-  Password String?
   user User?
 
 }

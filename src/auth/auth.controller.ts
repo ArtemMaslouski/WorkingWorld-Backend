@@ -51,8 +51,12 @@ export class AuthController {
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
   @Post('login')
-  async login(@Body() loginDTO: LoginDTO, @Res() res: Response) {
-    return this.authService.login(loginDTO, res);
+  async login(
+    @Body() loginDTO: LoginDTO,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    return this.authService.login(loginDTO, req, res);
   }
 
   @ApiTags('test')
@@ -139,6 +143,6 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return this.authService.createToken(user, res);
+    return this.authService.createToken(user, req, res);
   }
 }
