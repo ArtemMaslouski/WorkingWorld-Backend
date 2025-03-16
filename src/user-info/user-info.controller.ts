@@ -4,11 +4,21 @@ import { UserInfoService } from './user-info.service';
 import * as cookieParser from 'cookie-parser';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import { AddUserInfoDTO } from './DTO/add-user-info';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 
 @Controller('user-info')
 export class UserInfoController {
   constructor(private userInfoService: UserInfoService) {}
-  @Post('test')
+  @ApiOperation({
+    summary: 'Изменения пароля на странице профиля',
+    description:
+      'Функция позволяет изменить пароль на странице профиля пользователя',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
+  @Post('change-password')
   async changePassword(
     @Request() req,
     @Body() changePasswordDTO: ChangePasswordDTO,
@@ -23,6 +33,14 @@ export class UserInfoController {
     return this.userInfoService.getUserInfo();
   }
 
+  @ApiOperation({
+    summary: 'Добавить мобильный номер телефона на странице профиля',
+    description:
+      'Функция позволяет добавить номер телефона на странице профиля пользователя',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
   @Post('add-phone-number')
   async addPhoneNumber(
     @Request() req,
@@ -33,6 +51,14 @@ export class UserInfoController {
     return this.userInfoService.addMobilePhone(token, addPhoneNumberDTO);
   }
 
+  @ApiOperation({
+    summary: 'Добавить дополнительную ифнормацию на странице профиля',
+    description:
+      'Функция позволяет добавить дополнительную информацию о пользователе на странице профиля (Имя,Фамилия,Дата Рождения,Пол,Город,Электроная почта)',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
   @Post('add-user-info')
   async addUserInfo(@Request() req, @Body() addUserInfoDTO: AddUserInfoDTO) {
     const token = req.cookies['access_token'];
