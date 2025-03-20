@@ -78,6 +78,13 @@ export class UserInfoController {
     return this.userInfoService.addUserInfo(token, addUserInfoDTO);
   }
 
+  @ApiOperation({
+    summary: 'Загрузка аватара пользователя',
+    description: 'Функция позволяет загрузить изорбражение пользователя',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
   @Post('upload-avatar')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(@UploadedFile() file: Express.Multer.File) {
