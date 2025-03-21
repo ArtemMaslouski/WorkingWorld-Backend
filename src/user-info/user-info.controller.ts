@@ -1,15 +1,28 @@
-import { Controller, Body, Get, Request, Post } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Get,
+  Request,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { ChangePasswordDTO } from './DTO/change-password-DTO';
 import { UserInfoService } from './user-info.service';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import { AddUserInfoDTO } from './DTO/add-user-info';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadService } from './uploadFile.service';
 
 @ApiTags('Profile Info')
 @Controller('user-info')
 export class UserInfoController {
-  constructor(private userInfoService: UserInfoService) {}
+  constructor(
+    private userInfoService: UserInfoService,
+    private uploadAvatarService: UploadService,
+  ) {}
   @ApiOperation({
     summary: 'Изменения пароля на странице профиля',
     description:
@@ -63,5 +76,23 @@ export class UserInfoController {
   async addUserInfo(@Request() req, @Body() addUserInfoDTO: AddUserInfoDTO) {
     const token = req.cookies['access_token'];
     return this.userInfoService.addUserInfo(token, addUserInfoDTO);
+  }
+
+  @ApiOperation({
+    summary: 'Загрузка аватара пользователя',
+    description: 'Функция позволяет загрузить изорбражение пользователя',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
+  @Post('upload-avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req,
+  ) {
+    const token = req.cookies['access_token'];
+    const filePath = await this.uploadAvatarService.uploadFile(file, token);
+    return { imageUrl: filePath };
   }
 }
