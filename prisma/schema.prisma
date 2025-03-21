@@ -28,7 +28,8 @@ model Task {
   id  Int       @id @default(autoincrement())
   Category String @default("Uncategorized")
   Subcategory String @default("None") 
-  Address String
+  Address String 
+  AddressEnd String?
   BeginAt String
   EndAt String
   Description String
@@ -44,8 +45,17 @@ model UserInfo {
   City String?
   Email String?
   PhoneNumber String?
-  user User?
+  User User?
+  PhotoId Int? @unique
+  Photo Photo? @relation(fields: [PhotoId],references: [id] )
 
+}
+
+model Photo {
+  id Int @id @default(autoincrement())
+  url String @unique
+  createdAt DateTime @default(now())
+  userInfo UserInfo?
 }
 
 enum Gender {
