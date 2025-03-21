@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import { AddPhotoDTO } from './DTO/add-photo-DTO';
 import { UserInfoService } from './user-info.service';
+import { userInfo } from 'os';
 
 @Injectable()
 export class UploadService {
@@ -28,7 +29,6 @@ export class UploadService {
       },
     });
 
-    // Обновляем UserInfo, связывая его с созданной Photo
     const updatedUser = await this.prisma.user.update({
       where: {
         id: +userID,
@@ -47,10 +47,11 @@ export class UploadService {
       include: {
         userInfo: {
           include: {
-            Photo: true, // Включаем связанную таблицу Photo
+            Photo: true,
           },
         },
       },
     });
+    return updatedUser;
   }
 }
