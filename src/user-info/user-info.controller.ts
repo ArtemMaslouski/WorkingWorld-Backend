@@ -1,12 +1,12 @@
 import { Controller, Body, Get, Request, Post } from '@nestjs/common';
 import { ChangePasswordDTO } from './DTO/change-password-DTO';
 import { UserInfoService } from './user-info.service';
-import * as cookieParser from 'cookie-parser';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import { AddUserInfoDTO } from './DTO/add-user-info';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 
+@ApiTags('Profile Info')
 @Controller('user-info')
 export class UserInfoController {
   constructor(private userInfoService: UserInfoService) {}
