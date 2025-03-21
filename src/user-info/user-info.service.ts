@@ -88,7 +88,7 @@ export class UserInfoService {
     });
   }
 
-  verifyUser(token: string) {
+  public verifyUser(token: string) {
     return jwt.verify(token, process.env.SECRET_KEY_ACCESS_TOKEN);
   }
 }

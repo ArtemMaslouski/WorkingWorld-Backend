@@ -87,8 +87,12 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.serverError)
   @Post('upload-avatar')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadAvatar(@UploadedFile() file: Express.Multer.File) {
-    const filePath = await this.uploadAvatarService.uploadFile(file);
+  async uploadAvatar(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req,
+  ) {
+    const token = req.cookies['access_token'];
+    const filePath = await this.uploadAvatarService.uploadFile(file, token);
     return { imageUrl: filePath };
   }
 }
