@@ -17,6 +17,10 @@ export class createTaskDTO {
   Address?: string;
 
   @IsString()
+  @ApiProperty({ description: 'Конечный адрес (для курьеров)' })
+  AddressEnd: string;
+
+  @IsString()
   @ApiProperty({ description: 'Время начала задания' })
   BeginAt?: string;
 
