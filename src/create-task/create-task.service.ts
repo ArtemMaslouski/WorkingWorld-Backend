@@ -8,13 +8,21 @@ export class CreateTaskService {
   constructor(private prisma: PrismaService) {}
 
   async createTask(@Body() createTaskDTO: createTaskDTO) {
-    const { Category, Subcategory, Address, BeginAt, EndAt, Description } =
-      createTaskDTO;
+    const {
+      Category,
+      Subcategory,
+      Address,
+      AddressEnd,
+      BeginAt,
+      EndAt,
+      Description,
+    } = createTaskDTO;
     return this.prisma.task.create({
       data: {
         Category: Category,
         Subcategory: Subcategory,
         Address: Address,
+        AddressEnd: AddressEnd,
         BeginAt: BeginAt,
         EndAt: EndAt,
         Description: Description,

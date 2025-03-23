@@ -2,10 +2,7 @@ import { join } from 'path';
 import { writeFile, mkdir } from 'fs/promises';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { AddPhoneNumberDTO } from './DTO/add-phone-number';
-import { AddPhotoDTO } from './DTO/add-photo-DTO';
 import { UserInfoService } from './user-info.service';
-import { userInfo } from 'os';
 
 @Injectable()
 export class UploadService {
