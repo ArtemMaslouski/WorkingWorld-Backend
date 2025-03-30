@@ -6,6 +6,7 @@ import {
   Delete,
   Put,
   Param,
+  Request,
 } from '@nestjs/common';
 import { createTaskDTO } from './DTO/create-task-DTO';
 import { CreateTaskService } from './create-task.service';
@@ -68,5 +69,12 @@ export class CreateTaskController {
   ) {
     let idInNumber = +id;
     return await this.createTaskService.resetTaskData(idInNumber, refreshData);
+  }
+
+  @Get('userTask')
+  async getUsersTask(@Request() req) {
+    const token = req.cookies['access_token'];
+
+    return await this.createTaskService.getUserTask(token);
   }
 }
