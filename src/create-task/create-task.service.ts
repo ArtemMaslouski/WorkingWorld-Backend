@@ -2,10 +2,14 @@ import { Body, Injectable } from '@nestjs/common';
 import { createTaskDTO } from './DTO/create-task-DTO';
 import { PrismaService } from '../prisma.service';
 import { deleteTaskDTO } from './DTO/delete-task-DTO';
+import { UserInfoService } from 'src/user-info/user-info.service';
 
 @Injectable()
 export class CreateTaskService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userInfoService: UserInfoService,
+  ) {}
 
   async createTask(@Body() createTaskDTO: createTaskDTO) {
     const {
@@ -67,5 +71,15 @@ export class CreateTaskService {
     }
 
     return task;
+  }
+
+  async getUserTask(token: string) {
+    const { sub: userId } = this.userInfoService.verifyUser(token);
+
+    return await this.prisma.user.findMany({
+      where: {
+        id: +userId,
+      },
+    });
   }
 }
