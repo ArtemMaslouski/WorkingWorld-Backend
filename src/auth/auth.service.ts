@@ -12,6 +12,7 @@ import { DeleteDTO } from 'src/auth/DTO/DeleteDTO';
 import { SendEmailDTO } from 'src/auth/DTO/SendEmailDTO';
 import { VerificateCodeFromEmailDTO } from './DTO/VerificateCodeFromEmailDTO';
 import { ResetPassword } from 'src/auth/DTO/ResetPasswordDTO';
+import { UserInfoService } from 'src/user-info/user-info.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private mailerService: MailerService,
+    private userInfoService: UserInfoService,
   ) {}
 
   async registerUser(registerDTO: RegisterDTO) {
@@ -101,12 +103,12 @@ export class AuthService {
     return await this.prisma.user.findMany();
   }
 
-  async deleteUser(deleteDTO: DeleteDTO) {
+  async deleteUser(token: string) {
     try {
-      const { id } = deleteDTO;
+      const { sub: userID } = this.userInfoService.verifyUser(token);
       return await this.prisma.user.delete({
         where: {
-          id: id,
+          id: +userID,
         },
       });
     } catch {
