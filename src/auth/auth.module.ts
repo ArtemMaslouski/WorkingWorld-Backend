@@ -3,11 +3,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaService } from 'src/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService} from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailConfig } from './configs/mailer.config';
 import { jwtConfig } from './configs/jwt.config';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { UserInfoService } from 'src/user-info/user-info.service';
 
 @Module({
   imports: [
@@ -15,16 +16,15 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: mailConfig,
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: jwtConfig,
-      inject: [ConfigService]
-
-    })
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService],
+  providers: [AuthService, PrismaService, UserInfoService],
 })
 export class AuthModule {}

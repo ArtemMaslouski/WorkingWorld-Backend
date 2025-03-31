@@ -84,8 +84,9 @@ export class AuthController {
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
   @Delete('delete-users')
-  async deleteUsers(@Body() deleteDTO: DeleteDTO) {
-    return this.authService.deleteUser(deleteDTO);
+  async deleteUsers(@Req() req) {
+    const token = req.cookies['access_token'];
+    return this.authService.deleteUser(token);
   }
 
   @ApiOperation({
