@@ -100,7 +100,15 @@ export class AuthService {
   }
 
   async getUsers() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        userInfo: {
+          include: {
+            Photo: true,
+          },
+        },
+      },
+    });
   }
 
   async deleteUser(token: string) {
