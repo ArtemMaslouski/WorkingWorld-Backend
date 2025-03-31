@@ -13,24 +13,27 @@ export class UserInfoService {
     try {
       const { OldPassword, Password, NewPassword } = changePasswordDTO;
 
-      const user = await this.verifyUser(token);
-      const hashedPassword = await bcrypt.hash(NewPassword, 10);
-      console.log(user);
+      const { sub: userID } = this.verifyUser(token);
 
-      //const isValid = await bcrypt.compare(OldPassword, user.Password);
-
-      if (Password !== NewPassword) {
-        throw new Error('Пароли не совпадают');
-      }
-
-      return await this.prismaService.user.update({
+      const user = await this.prismaService.user.findFirst({
         where: {
-          id: +user.sub,
-        },
-        data: {
-          Password: hashedPassword,
+          id: +userID,
         },
       });
+      const hashedPassword = await bcrypt.hash(NewPassword, 10);
+
+      const isValid = await bcrypt.compare(OldPassword, user.Password);
+
+      if (isValid && Password === NewPassword) {
+        return await this.prismaService.user.update({
+          where: {
+            id: +user.id,
+          },
+          data: {
+            Password: hashedPassword,
+          },
+        });
+      }
     } catch (error) {
       console.log(error);
       throw new Error('Не удалось изменить пароль');
