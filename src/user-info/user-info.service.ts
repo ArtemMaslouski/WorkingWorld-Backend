@@ -40,8 +40,12 @@ export class UserInfoService {
     }
   }
 
-  async getUserInfo() {
+  async getUserInfo(token: string) {
+    const { sub: userID } = this.verifyUser(token);
     return await this.prismaService.user.findMany({
+      where: {
+        id: +userID,
+      },
       include: {
         userInfo: true,
       },
@@ -72,21 +76,32 @@ export class UserInfoService {
     const { sub: userID } = this.verifyUser(token);
 
     return this.prismaService.user.update({
-      where: {
-        id: +userID,
-      },
-      select: { userInfo: true },
+      where: { id: +userID },
       data: {
         userInfo: {
-          update: {
-            Name,
-            Surname,
-            BirthdayDate: BirthdayDate ? new Date(BirthdayDate) : undefined,
-            Sex,
-            City,
-            Email,
+          upsert: {
+            create: {
+              Name,
+              Surname,
+              BirthdayDate,
+              Sex,
+              City,
+              Email,
+            },
+            update: {
+              Name,
+              Surname,
+              BirthdayDate,
+              Sex,
+              City,
+              Email,
+            },
           },
         },
+      },
+      include: {
+        userInfo: true,
+        Task: true,
       },
     });
   }

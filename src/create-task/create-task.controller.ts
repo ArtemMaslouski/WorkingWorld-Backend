@@ -27,8 +27,9 @@ export class CreateTaskController {
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
   @Post('create')
-  async createTask(@Body() taskDTO: createTaskDTO) {
-    return this.createTaskService.createTask(taskDTO);
+  async createTask(@Body() taskDTO: createTaskDTO, @Request() req) {
+    const token = req.cookies['access_token'];
+    return this.createTaskService.createTask(taskDTO, token);
   }
 
   @ApiOperation({
