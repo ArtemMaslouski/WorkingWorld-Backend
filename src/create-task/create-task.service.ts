@@ -31,7 +31,7 @@ export class CreateTaskService {
         BeginAt: BeginAt,
         EndAt: EndAt,
         Description: Description,
-        UserId: +userID,
+        //UserId: +userID,
       },
     });
   }
@@ -84,7 +84,7 @@ export class CreateTaskService {
       },
       include: {
         userInfo: true,
-        Task: true,
+        tasks: true,
       },
     });
   }

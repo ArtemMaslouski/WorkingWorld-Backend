@@ -101,7 +101,7 @@ export class UserInfoService {
       },
       include: {
         userInfo: true,
-        Task: true,
+        tasks: true,
       },
     });
   }
