@@ -23,7 +23,7 @@ model User {
   userInfo         UserInfo? @relation(fields: [userInfoId], references: [id])
   userInfoId  Int? @unique
   Task Task? @relation(fields: [TaskId], references: [id])
-  TaskId Int? @unique
+  TaskId Int? @unique 
 
 }
 
