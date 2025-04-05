@@ -22,8 +22,7 @@ model User {
   ResetCodeExpires DateTime?
   userInfo         UserInfo? @relation(fields: [userInfoId], references: [id])
   userInfoId  Int? @unique
-  Task Task[]
-  TaskId Int? @unique 
+  tasks Task[]
 
 }
 
@@ -36,7 +35,7 @@ model Task {
   BeginAt String
   EndAt String
   Description String
-  UserId Int 
+  UserId Int?
   User User? @relation(fields: [UserId], references: [id])
   
 }
