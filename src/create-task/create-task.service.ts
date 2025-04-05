@@ -11,7 +11,8 @@ export class CreateTaskService {
     private userInfoService: UserInfoService,
   ) {}
 
-  async createTask(@Body() createTaskDTO: createTaskDTO) {
+  async createTask(@Body() createTaskDTO: createTaskDTO, token: string) {
+    const { sub: userID } = this.userInfoService.verifyUser(token);
     const {
       Category,
       Subcategory,
@@ -30,6 +31,7 @@ export class CreateTaskService {
         BeginAt: BeginAt,
         EndAt: EndAt,
         Description: Description,
+        UserId: +userID,
       },
     });
   }
@@ -79,6 +81,10 @@ export class CreateTaskService {
     return await this.prisma.user.findMany({
       where: {
         id: +userId,
+      },
+      include: {
+        userInfo: true,
+        Task: true,
       },
     });
   }

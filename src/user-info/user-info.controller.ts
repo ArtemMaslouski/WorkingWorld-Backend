@@ -42,8 +42,9 @@ export class UserInfoController {
   }
 
   @Get('get-info')
-  async getUserInfo() {
-    return this.userInfoService.getUserInfo();
+  async getUserInfo(@Request() req) {
+    const token = req.cookies['access_token'];
+    return this.userInfoService.getUserInfo(token);
   }
 
   @ApiOperation({
