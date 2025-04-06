@@ -7,7 +7,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('Working World')
     .setDescription(
@@ -23,7 +22,7 @@ async function bootstrap() {
         in: 'header',
         name: 'Authorization',
       },
-      'JWT', // Имя схемы безопасности
+      'JWT',
     )
     .build();
 
