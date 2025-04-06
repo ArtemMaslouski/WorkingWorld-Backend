@@ -7,7 +7,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:3000', // Укажите источник вашего фронтенда
+    credentials: true, // Разрешить отправку cookies/credentials
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешенные методы
+    allowedHeaders: 'Content-Type, Accept, Authorization', //
+  });
   const config = new DocumentBuilder()
     .setTitle('Working World')
     .setDescription(
