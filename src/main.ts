@@ -15,6 +15,16 @@ async function bootstrap() {
     )
     .setVersion('1.0')
     .addTag('Working World')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+        name: 'Authorization',
+      },
+      'JWT', // Имя схемы безопасности
+    )
     .build();
 
   const documetnFactory = () => SwaggerModule.createDocument(app, config);
