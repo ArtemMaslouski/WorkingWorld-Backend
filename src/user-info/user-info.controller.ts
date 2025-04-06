@@ -11,7 +11,12 @@ import { ChangePasswordDTO } from './DTO/change-password-DTO';
 import { UserInfoService } from './user-info.service';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import { AddUserInfoDTO } from './DTO/add-user-info';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './uploadFile.service';
@@ -55,6 +60,7 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.ok)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
+  @ApiSecurity('JWT')
   @Post('add-phone-number')
   async addPhoneNumber(
     @Request() req,
@@ -73,6 +79,7 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.ok)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
+  @ApiSecurity('JWT')
   @Post('add-user-info')
   async addUserInfo(@Request() req, @Body() addUserInfoDTO: AddUserInfoDTO) {
     const token = req.cookies['access_token'];
@@ -86,6 +93,7 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.ok)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
+  @ApiSecurity('JWT')
   @Post('upload-avatar')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(
