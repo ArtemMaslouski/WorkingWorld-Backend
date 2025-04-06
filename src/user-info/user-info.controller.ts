@@ -2,11 +2,12 @@ import {
   Controller,
   Body,
   Get,
-  Request,
   Post,
   UseInterceptors,
   UploadedFile,
+  Request,
 } from '@nestjs/common';
+import { Request as RequestExpress } from 'express';
 import { ChangePasswordDTO } from './DTO/change-password-DTO';
 import { UserInfoService } from './user-info.service';
 import { AddPhoneNumberDTO } from './DTO/add-phone-number';
@@ -38,7 +39,7 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.serverError)
   @Post('change-password')
   async changePassword(
-    @Request() req,
+    @Request() req: RequestExpress,
     @Body() changePasswordDTO: ChangePasswordDTO,
   ) {
     const token = req.cookies['access_token'];
@@ -47,7 +48,7 @@ export class UserInfoController {
   }
 
   @Get('get-info')
-  async getUserInfo(@Request() req) {
+  async getUserInfo(@Request() req: RequestExpress) {
     const token = req.cookies['access_token'];
     return this.userInfoService.getUserInfo(token);
   }
@@ -63,7 +64,7 @@ export class UserInfoController {
   @ApiSecurity('JWT')
   @Post('add-phone-number')
   async addPhoneNumber(
-    @Request() req,
+    @Request() req: RequestExpress,
     @Body() addPhoneNumberDTO: AddPhoneNumberDTO,
   ) {
     const token = req.cookies['access_token'];
@@ -81,7 +82,10 @@ export class UserInfoController {
   @ApiResponse(SwaggerResponses.serverError)
   @ApiSecurity('JWT')
   @Post('add-user-info')
-  async addUserInfo(@Request() req, @Body() addUserInfoDTO: AddUserInfoDTO) {
+  async addUserInfo(
+    @Request() req: RequestExpress,
+    @Body() addUserInfoDTO: AddUserInfoDTO,
+  ) {
     const token = req.cookies['access_token'];
     return this.userInfoService.addUserInfo(token, addUserInfoDTO);
   }
@@ -98,7 +102,7 @@ export class UserInfoController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req,
+    @Request() req: RequestExpress,
   ) {
     const token = req.cookies['access_token'];
     const filePath = await this.uploadAvatarService.uploadFile(file, token);
