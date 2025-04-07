@@ -210,6 +210,11 @@ export class AuthService {
     }
   }
 
+  quit(@Res() res: Response) {
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+  }
+
   @Cron('*/5 * * * *')
   async resetCode() {
     const now = new Date();
