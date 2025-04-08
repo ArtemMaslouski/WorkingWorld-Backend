@@ -68,6 +68,7 @@ export class UserInfoController {
     @Body() addPhoneNumberDTO: AddPhoneNumberDTO,
   ) {
     const token = req.cookies['access_token'];
+    console.log(token);
 
     return this.userInfoService.addMobilePhone(token, addPhoneNumberDTO);
   }

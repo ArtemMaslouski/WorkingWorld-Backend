@@ -53,6 +53,7 @@ export class UserInfoService {
   }
 
   async addMobilePhone(token: string, addPhoneNumber: AddPhoneNumberDTO) {
+    console.log(token);
     const { PhoneNumber } = addPhoneNumber;
     const { sub: userID } = this.verifyUser(token);
 
