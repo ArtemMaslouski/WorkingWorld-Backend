@@ -76,8 +76,8 @@ export class AuthService {
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
       maxAge: 30 * 60 * 100,
     });
 
@@ -88,8 +88,8 @@ export class AuthService {
 
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
+      secure: true,
+      sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
