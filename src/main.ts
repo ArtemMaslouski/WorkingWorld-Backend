@@ -8,9 +8,13 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Укажите источник вашего фронтенда
-    credentials: true, // Разрешить отправку cookies/credentials
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешенные методы
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'comfortable-nourishment-production-316b.up.railway.app',
+    ],
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept, Authorization', //
   });
   const config = new DocumentBuilder()
