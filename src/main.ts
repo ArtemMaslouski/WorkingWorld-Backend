@@ -11,7 +11,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
-      'comfortable-nourishment-production-316b.up.railway.app',
+      'http://comfortable-nourishment-production-316b.up.railway.app',
+      'https://comfortable-nourishment-production-316b.up.railway.app',
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
