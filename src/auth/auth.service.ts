@@ -94,7 +94,8 @@ export class AuthService {
     });
 
     return res.status(200).send({
-      message: 'Успешный вход',
+      access_token,
+      refresh_token,
     });
   }
 
