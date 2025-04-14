@@ -44,25 +44,23 @@ export class AuthService {
   async login(loginDTO: LoginDTO, @Req() req: Request, @Res() res: Response) {
     const { Email, Password } = loginDTO;
     const user = await this.prisma.user.findUnique({
-      where: {
-        Email: Email,
-      },
+      where: { Email },
     });
 
     if (!user) {
-      throw new Error('Пользователя не существует');
+      return res.status(404).send({ message: 'Пользователь не существует' });
     }
 
     const isValidPassword = await bcrypt.compare(Password, user.Password);
 
     if (!isValidPassword) {
-      throw new Error('Неверный пароль');
+      return res.status(401).send({ message: 'Неверный пароль' });
     }
 
-    return this.createToken(user, req, res);
+    return this.createToken(user, res);
   }
 
-  async createToken(user, @Req() req: Request, @Res() res: Response) {
+  async createToken(user, res: Response) {
     const payload = {
       sub: user.id,
       UserName: user.UserName,
@@ -78,7 +76,8 @@ export class AuthService {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: 30 * 60 * 100,
+      maxAge: 30 * 60 * 1000,
+      domain: '.up.railway.app',
     });
 
     const refresh_token = this.jwtService.sign(payload, {
@@ -91,11 +90,11 @@ export class AuthService {
       secure: true,
       sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      domain: '.up.railway.app',
     });
 
-    return res.send({
-      access_token: access_token,
-      refresh_token: refresh_token,
+    return res.status(200).send({
+      message: 'Успешный вход',
     });
   }
 

@@ -144,18 +144,6 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return this.authService.createToken(user, req, res);
-  }
-
-  @ApiOperation({
-    summary: 'Выход',
-    description: 'Выход с очисткой куки',
-  })
-  @ApiResponse(SwaggerResponses.created)
-  @ApiResponse(SwaggerResponses.badRequest)
-  @ApiResponse(SwaggerResponses.serverError)
-  @Post('quit')
-  async quit(@Res() res: Response) {
-    return this.authService.quit(res);
+    return this.authService.createToken(user, res);
   }
 }
