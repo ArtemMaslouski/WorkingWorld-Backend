@@ -77,7 +77,7 @@ export class AuthService {
       secure: true,
       sameSite: 'none',
       maxAge: 30 * 60 * 1000,
-      domain: '.up.railway.app',
+      //domain: '.up.railway.app',
     });
 
     const refresh_token = this.jwtService.sign(payload, {
@@ -90,7 +90,7 @@ export class AuthService {
       secure: true,
       sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      domain: '.up.railway.app',
+      //domain: '.up.railway.app',
     });
 
     return res.status(200).send({

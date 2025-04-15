@@ -16,7 +16,7 @@ async function bootstrap() {
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept, Authorization', //
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   });
   const config = new DocumentBuilder()
     .setTitle('Working World')
