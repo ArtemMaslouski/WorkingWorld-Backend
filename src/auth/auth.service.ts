@@ -74,8 +74,8 @@ export class AuthService {
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 60 * 1000,
       //domain: '.up.railway.app',
     });
@@ -87,8 +87,8 @@ export class AuthService {
 
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
       //domain: '.up.railway.app',
     });
