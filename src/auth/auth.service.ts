@@ -61,6 +61,8 @@ export class AuthService {
   }
 
   async createToken(user, res: Response) {
+    const isDev = process.env.NODE_ENV !== 'production';
+
     const payload = {
       sub: user.id,
       UserName: user.UserName,
@@ -74,10 +76,9 @@ export class AuthService {
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: !isDev,
+      sameSite: isDev ? 'lax' : 'none',
       maxAge: 30 * 60 * 1000,
-      //domain: '.up.railway.app',
     });
 
     const refresh_token = this.jwtService.sign(payload, {
@@ -90,7 +91,6 @@ export class AuthService {
       secure: true,
       sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      //domain: '.up.railway.app',
     });
 
     return res.status(200).send({
