@@ -50,6 +50,7 @@ model UserInfo {
   Email String?
   PhoneNumber String?
   User User?
+  Description String?
   PhotoId Int? @unique
   Photo Photo? @relation(fields: [PhotoId],references: [id] )
 
