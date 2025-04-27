@@ -21,6 +21,7 @@ import {
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './uploadFile.service';
+import { AddDescription } from './DTO/add-description';
 
 @ApiTags('Profile Info')
 @Controller('user-info')
@@ -68,11 +69,28 @@ export class UserInfoController {
     @Body() addPhoneNumberDTO: AddPhoneNumberDTO,
   ) {
     const token = req.cookies['access_token'];
-    console.log(token);
 
     return this.userInfoService.addMobilePhone(token, addPhoneNumberDTO);
   }
 
+  @ApiOperation({
+    summary: 'Добавить описание пользователя на странице профиля',
+    description:
+      'Функция позволяет добавить пользователю описание о себе на страницу профиля',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
+  @ApiSecurity('JWT')
+  @Post('add-description')
+  async addDescription(
+    @Request() req: RequestExpress,
+    @Body() addDescription: AddDescription,
+  ) {
+    const token = req.cookies['access_token'];
+
+    return this.userInfoService.addDescription(token, addDescription);
+  }
   @ApiOperation({
     summary: 'Добавить дополнительную ифнормацию на странице профиля',
     description:

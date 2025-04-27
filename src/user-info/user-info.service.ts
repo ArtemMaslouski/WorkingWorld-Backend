@@ -5,6 +5,7 @@ import { AddPhoneNumberDTO } from './DTO/add-phone-number';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { AddUserInfoDTO } from './DTO/add-user-info';
+import { AddDescription } from './DTO/add-description';
 
 @Injectable()
 export class UserInfoService {
@@ -66,6 +67,25 @@ export class UserInfoService {
         userInfo: {
           update: {
             PhoneNumber: PhoneNumber,
+          },
+        },
+      },
+    });
+  }
+
+  async addDescription(token: string, addDescription: AddDescription) {
+    const { Description } = addDescription;
+    const { sub: userID } = this.verifyUser(token);
+
+    return this.prismaService.user.update({
+      where: {
+        id: +userID,
+      },
+      select: { userInfo: true },
+      data: {
+        userInfo: {
+          update: {
+            Description: Description,
           },
         },
       },
