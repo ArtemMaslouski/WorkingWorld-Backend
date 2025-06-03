@@ -65,7 +65,7 @@ export class CreateTaskController {
   @ApiResponse(SwaggerResponses.ok)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
-  @Put('refresh/:id')
+  @Put('/refresh/:id')
   async refreshData(
     @Param('id') id: string,
     @Body() refreshData: createTaskDTO,

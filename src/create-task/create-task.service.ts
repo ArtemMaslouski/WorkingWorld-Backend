@@ -51,8 +51,15 @@ export class CreateTaskService {
   }
 
   async resetTaskData(id: number, resetData: createTaskDTO) {
-    const { Category, Subcategory, Address, BeginAt, EndAt, Description } =
-      resetData;
+    const {
+      Category,
+      Subcategory,
+      Address,
+      AddressEnd,
+      BeginAt,
+      EndAt,
+      Description,
+    } = resetData;
 
     const task = await this.prisma.task.update({
       where: {
@@ -62,6 +69,7 @@ export class CreateTaskService {
         Category,
         Subcategory,
         Address,
+        AddressEnd,
         BeginAt,
         EndAt,
         Description,
