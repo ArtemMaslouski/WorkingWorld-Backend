@@ -140,10 +140,6 @@ export class AuthController {
   @UseGuards(RefreshJwtGuard)
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
-    const user = req['user'];
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return this.authService.createToken(user, res);
+    return this.authService.refreshToken(req, res);
   }
 }
