@@ -13,6 +13,7 @@ import { SendEmailDTO } from 'src/auth/DTO/SendEmailDTO';
 import { VerificateCodeFromEmailDTO } from './DTO/VerificateCodeFromEmailDTO';
 import { ResetPassword } from 'src/auth/DTO/ResetPasswordDTO';
 import { UserInfoService } from 'src/user-info/user-info.service';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -230,5 +231,36 @@ export class AuthService {
         ResetCodeExpires: null,
       },
     });
+  }
+
+  async refreshToken(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+
+    if (!refreshToken) {
+      return res.status(401).send({ message: 'Refresh_token отсутствует' });
+    }
+
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.SECRET_KEY_REFRESH_TOKEN,
+      });
+
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: payload.sub,
+        },
+      });
+
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователь не найден' });
+      }
+
+      return this.createToken(user, res);
+    } catch (error) {
+      console.error('Ошибка при обновлении токенов', error);
+      return res
+        .status(401)
+        .send({ message: 'Refresh_token недействителен или истек' });
+    }
   }
 }
