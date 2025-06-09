@@ -137,7 +137,6 @@ export class AuthController {
   @ApiResponse(SwaggerResponses.created)
   @ApiResponse(SwaggerResponses.badRequest)
   @ApiResponse(SwaggerResponses.serverError)
-  @UseGuards(RefreshJwtGuard)
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     return this.authService.refreshToken(req, res);
