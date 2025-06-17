@@ -9,6 +9,7 @@ import { CreateTaskModule } from './create-task/create-task.module';
 import { UserInfoService } from './user-info/user-info.service';
 import { UserInfoController } from './user-info/user-info.controller';
 import { UserInfoModule } from './user-info/user-info.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserInfoModule } from './user-info/user-info.module';
     ConfigModule.forRoot(),
     CreateTaskModule,
     UserInfoModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
