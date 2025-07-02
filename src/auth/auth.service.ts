@@ -108,7 +108,7 @@ export class AuthService {
             Photo: true,
           },
         },
-        tasks: true,
+        Tasks: true,
       },
     });
   }

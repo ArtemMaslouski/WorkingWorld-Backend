@@ -122,7 +122,7 @@ export class UserInfoService {
       },
       include: {
         userInfo: true,
-        tasks: true,
+        Tasks: true,
       },
     });
   }
