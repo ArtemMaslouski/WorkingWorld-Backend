@@ -1,28 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Message, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class ChatService {
   constructor(private prismaService: PrismaService) {}
 
-  async sendMessage(chatId: number, senderId: number, content: string) {
-    return await this.prismaService.message.create({
+  async createChatBetweenUsers(userId1: number, userId2) {
+    //Проверка что пользователи не совпадают
+    if (userId1 === userId2) {
+      throw new ForbiddenException('Нельзя создать чат с самим собой');
+    }
+
+    //Проверка существует ли такой чат уже между двумя пользователями
+    const existingChat = await this.prismaService.chat.findFirst({
+      where: {
+        AND: [
+          { participants: { some: { userId: userId1 } } },
+          { participants: { some: { userId: userId2 } } },
+        ],
+      },
+      include: { participants: true },
+    });
+
+    if (existingChat && existingChat.participants.length === 2) {
+      return existingChat;
+    }
+
+    const chat = await this.prismaService.chat.create({
       data: {
-        chatId,
-        content,
-        senderId,
+        participants: {
+          create: [
+            { user: { connect: { id: userId1 } } },
+            { user: { connect: { id: userId2 } } },
+          ],
+        },
       },
       include: {
-        sender: true,
+        participants: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
-  }
 
-  async getMessages(chatId: number) {
-    return await this.prismaService.message.findMany({
-      where: { chatId },
-      orderBy: { createdAt: 'asc' },
-      include: { sender: true },
-    });
+    return chat;
   }
 }
