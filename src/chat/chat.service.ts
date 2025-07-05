@@ -1,11 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Message, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { CreateMessageDTO } from './DTO/create-message-dto';
 
 @Injectable()
 export class ChatService {
   constructor(private prismaService: PrismaService) {}
 
+  //Создание чата между двумя пользователями
   async createChatBetweenUsers(userId1: number, userId2) {
     //Проверка что пользователи не совпадают
     if (userId1 === userId2) {
@@ -46,5 +48,65 @@ export class ChatService {
     });
 
     return chat;
+  }
+
+  //Создание сообщения в чате
+  async createMessage(data: CreateMessageDTO) {
+    const { chatId, senderId, content } = data;
+
+    //Проверка на то,что пользователь состоит в этом чате
+    const participant = await this.prismaService.chatParticipant.findUnique({
+      where: {
+        userId_chatId: {
+          chatId: chatId,
+          userId: senderId,
+        },
+      },
+    });
+
+    if (!participant) {
+      throw new ForbiddenException('Пользователь не является участником чата');
+    }
+
+    const message = await this.prismaService.message.create({
+      data: {
+        chatId,
+        senderId,
+        content,
+      },
+    });
+
+    return message;
+  }
+
+  //Получить сообщения исходя из определенного чата
+  async getAllMessages(chatId: number, userId: number) {
+    const participant = await this.prismaService.chatParticipant.findUnique({
+      where: {
+        userId_chatId: {
+          chatId,
+          userId,
+        },
+      },
+    });
+
+    if (!participant) {
+      throw new ForbiddenException('Пользователь не является участником чата');
+    }
+
+    const messages = await this.prismaService.message.findMany({
+      where: { chatId },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            UserName: true,
+          },
+        },
+      },
+    });
+
+    return messages;
   }
 }
