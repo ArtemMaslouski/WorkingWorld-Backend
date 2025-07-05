@@ -22,7 +22,7 @@ export class UploadService {
     // Создаем запись в Photo
     const photo = await this.prisma.photo.create({
       data: {
-        url: `/uploads/${file.originalname}`,
+        Url: `/uploads/${file.originalname}`,
       },
     });
 
