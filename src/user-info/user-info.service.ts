@@ -85,7 +85,7 @@ export class UserInfoService {
       data: {
         userInfo: {
           update: {
-            Description : Description,
+            Description: Description,
           },
         },
       },
