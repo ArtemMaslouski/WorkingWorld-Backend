@@ -92,7 +92,7 @@ export class CreateTaskService {
       },
       include: {
         userInfo: true,
-        Tasks: true,
+        tasks: true,
       },
     });
   }

@@ -29,8 +29,6 @@ export class CreateTaskController {
   @Post('create')
   async createTask(@Body() taskDTO: createTaskDTO, @Request() req) {
     const token = req.cookies['access_token'];
-    console.log(token);
-    console.log(process.env.NODE_ENV);
     return this.createTaskService.createTask(taskDTO, token);
   }
 
