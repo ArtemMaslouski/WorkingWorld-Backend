@@ -26,6 +26,8 @@ export class ChatController {
   @Get('get-chats')
   async getChats(@Request() req: RequestExpress) {
     const token = req.cookies['access_token'];
+    console.log(req.cookies['access_token']);
+    console.log(token);
     return await this.chatService.getUserChats(token);
   }
 }
