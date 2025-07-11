@@ -115,6 +115,7 @@ export class ChatService {
   }
 
   async getUserChats(token: string) {
+    console.log(token);
     const { sub: userId } = this.userInfoService.verifyUser(token);
 
     const chats = await this.prismaService.chat.findMany({
