@@ -2,10 +2,14 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Message, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMessageDTO } from './DTO/create-message-dto';
+import { UserInfoService } from '../user-info/user-info.service';
 
 @Injectable()
 export class ChatService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private userInfoService: UserInfoService,
+  ) {}
 
   //Создание чата между двумя пользователями
   async createChatBetweenUsers(userId1: number, userId2: number) {
@@ -110,12 +114,14 @@ export class ChatService {
     return messages;
   }
 
-  async getUserChats(userId: number) {
+  async getUserChats(token: string) {
+    const { sub: userId } = this.userInfoService.verifyUser(token);
+
     const chats = await this.prismaService.chat.findMany({
       where: {
         participants: {
           some: {
-            userId: userId,
+            userId: +userId,
           },
         },
       },
