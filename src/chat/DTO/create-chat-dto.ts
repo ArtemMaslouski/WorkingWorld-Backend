@@ -1,9 +1,12 @@
-import { IsInt } from 'class-validator';
+import { IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateChatDTO {
-  @IsInt()
+  @ApiProperty({ description: ' Id первого пользователя' })
+  @IsNumber()
   userId1: number;
 
-  @IsInt()
+  @ApiProperty({ description: 'Id второго пользователя' })
+  @IsNumber()
   userId2: number;
 }
