@@ -59,14 +59,6 @@ export class AuthController {
     return this.authService.login(loginDTO, req, res);
   }
 
-  @ApiTags('test')
-  @Get('test')
-  @UseGuards(AuthGuard)
-  @UseGuards(RolesGuard)
-  test() {
-    return 'Hello World';
-  }
-
   @Get('get-users')
   @ApiResponse(SwaggerResponses.ok)
   @ApiResponse(SwaggerResponses.badRequest)

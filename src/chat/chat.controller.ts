@@ -1,14 +1,18 @@
-import { Controller, Body, Post, Get, Request } from '@nestjs/common';
+import { Controller, Body, Post, Get, Request, Req, Res } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDTO } from './DTO/create-chat-dto';
 import { Request as RequestExpress } from 'express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 import { CreateMessageDTO } from './DTO/create-message-dto';
+import { UserInfoService } from '../user-info/user-info.service';
 
 @Controller('chats')
 export class ChatController {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private userInfoService: UserInfoService,
+  ) {}
 
   @Post('createChat')
   async createTask(@Body() createChatDto: CreateChatDTO) {
@@ -43,7 +47,8 @@ export class ChatController {
   @ApiResponse(SwaggerResponses.created)
   @ApiResponse(SwaggerResponses.notFound)
   @Post('createMessage')
-  async createMessage(@Body() createMessageDto: CreateMessageDTO) {
-    return this.chatService.createMessage(createMessageDto);
+  async createMessage(@Req() req, @Body() createMessageDto: CreateMessageDTO) {
+    const token = req.cookies['access_token'];
+    return this.chatService.createMessage(createMessageDto, token);
   }
 }
