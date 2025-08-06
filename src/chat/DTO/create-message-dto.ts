@@ -10,7 +10,7 @@ export class CreateMessageDTO {
   @ApiProperty({ description: 'id отправителя' })
   @IsInt()
   @IsNotEmpty()
-  senderId: number;
+  senderId?: number;
 
   @ApiProperty({ description: 'Содержание сообщения' })
   @IsString()
