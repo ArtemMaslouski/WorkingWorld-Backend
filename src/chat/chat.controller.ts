@@ -1,4 +1,14 @@
-import { Controller, Body, Post, Get, Request, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  Get,
+  Request,
+  Req,
+  Res,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDTO } from './DTO/create-chat-dto';
 import { Request as RequestExpress } from 'express';
@@ -6,6 +16,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SwaggerResponses } from 'src/auth/configs/swagger-responses.config';
 import { CreateMessageDTO } from './DTO/create-message-dto';
 import { UserInfoService } from '../user-info/user-info.service';
+import { GetMessageDTO } from './DTO/get-message-dto';
 
 @Controller('chats')
 export class ChatController {
@@ -50,5 +61,19 @@ export class ChatController {
   async createMessage(@Req() req, @Body() createMessageDto: CreateMessageDTO) {
     const token = req.cookies['access_token'];
     return this.chatService.createMessage(createMessageDto, token);
+  }
+
+  @ApiOperation({
+    summary: 'Посмотреть сообщения в чате',
+    description:
+      'Данная функция позволяет получить сообшения из чата по его id',
+  })
+  @ApiResponse(SwaggerResponses.ok)
+  @ApiResponse(SwaggerResponses.serverError)
+  @ApiResponse(SwaggerResponses.notFound)
+  @Get('getMessages/:id')
+  async getMessages(@Req() req, @Param('id', ParseIntPipe) id: number) {
+    const token = req.cookies['access_token'];
+    return this.chatService.getAllMessages(id, token);
   }
 }

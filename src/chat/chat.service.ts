@@ -3,6 +3,7 @@ import { Message, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMessageDTO } from './DTO/create-message-dto';
 import { UserInfoService } from '../user-info/user-info.service';
+import { GetMessageDTO } from './DTO/get-message-dto';
 
 @Injectable()
 export class ChatService {
@@ -87,7 +88,10 @@ export class ChatService {
   }
 
   //Получить сообщения исходя из определенного чата
-  async getAllMessages(chatId: number, userId: number) {
+  async getAllMessages(chatId: number, token: string) {
+    const { sub: userIdStr } = await this.userInfoService.verifyUser(token);
+    const userId = Number(userIdStr);
+
     const participant = await this.prismaService.chatParticipant.findUnique({
       where: {
         userId_chatId: {
