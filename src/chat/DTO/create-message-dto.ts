@@ -15,5 +15,5 @@ export class CreateMessageDTO {
   @ApiProperty({ description: 'Содержание сообщения' })
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content: any;
 }

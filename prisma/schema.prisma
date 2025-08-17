@@ -8,30 +8,29 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  UserName         String
-  Email            String    @unique
+  id               Int               @id @default(autoincrement())
   Password         String
+  UserName         String
+  Email            String            @unique
   ResetCode        String?
   ResetCodeExpires DateTime?
-  userInfo         UserInfo? @relation(fields: [userInfoId], references: [id])
-  userInfoId       Int?      @unique
-
-  tasks            Task[]
-  sentMessages     Message[]         @relation("UserMessages")
+  userInfoId       Int?              @unique
   chatParticipants ChatParticipant[]
+  sentMessages     Message[]         @relation("UserMessages")
+  tasks            Task[]
+  userInfo         UserInfo?         @relation(fields: [userInfoId], references: [id])
 }
 
 model Task {
   id          Int     @id @default(autoincrement())
+  Address     String
+  Description String
   Category    String  @default("Uncategorized")
   Subcategory String  @default("None")
-  Address     String
   AddressEnd  String?
+  UserId      Int?
   BeginAt     String
   EndAt       String
-  Description String
-  UserId      Int?
   User        User?   @relation(fields: [UserId], references: [id])
 }
 
@@ -45,49 +44,46 @@ model UserInfo {
   Email        String?
   PhoneNumber  String?
   Description  String?
-
-  User    User?
-  PhotoId Int?   @unique
-  Photo   Photo? @relation(fields: [PhotoId], references: [id])
+  PhotoId      Int?      @unique
+  User         User?
+  Photo        Photo?    @relation(fields: [PhotoId], references: [id])
 }
 
 model Photo {
   id        Int       @id @default(autoincrement())
-  url       String    @unique
   createdAt DateTime  @default(now())
+  url       String    @unique
   userInfo  UserInfo?
 }
 
 model Chat {
   id           Int               @id @default(autoincrement())
   createdAt    DateTime          @default(now())
-  messages     Message[]
   participants ChatParticipant[]
+  messages     Message[]
 }
 
 model ChatParticipant {
-  id     Int @id @default(autoincrement())
+  id     Int  @id @default(autoincrement())
   userId Int
   chatId Int
-
-  user User @relation(fields: [userId], references: [id])
-  chat Chat @relation(fields: [chatId], references: [id])
+  chat   Chat @relation(fields: [chatId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   @@unique([userId, chatId])
 }
 
 model Message {
   id        Int      @id @default(autoincrement())
-  content   String
-  senderId  Int
   chatId    Int
+  content   Json
   createdAt DateTime @default(now())
-
-  sender User @relation("UserMessages", fields: [senderId], references: [id])
-  chat   Chat @relation(fields: [chatId], references: [id])
+  senderId  Int
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  sender    User     @relation("UserMessages", fields: [senderId], references: [id])
 }
 
 enum Gender {
   мужской
-  женский
+   женский
 }
