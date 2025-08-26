@@ -13,8 +13,10 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://localhost:3002',
       'http://comfortable-nourishment-production-316b.up.railway.app',
       'https://comfortable-nourishment-production-316b.up.railway.app',
+      'workingwork-frontend-production.up.railway.app',
     ],
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

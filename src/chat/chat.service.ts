@@ -58,6 +58,7 @@ export class ChatService {
   //Создание сообщения в чате
   async createMessage(data: CreateMessageDTO, token?: string) {
     const { chatId, content } = data;
+    console.log(content);
     const { sub: senderIdStr } = await this.userInfoService.verifyUser(token);
     const senderId: number = Number(senderIdStr);
     console.log(senderId);
