@@ -42,6 +42,16 @@ export class AuthService {
     }
   }
 
+  async getTokenFromCookies(@Req() req: Request) {
+    try {
+      const response = req.cookies['access_token'];
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.error(`Ошибка: `, error);
+    }
+  }
+
   async login(loginDTO: LoginDTO, @Req() req: Request, @Res() res: Response) {
     const { Email, Password } = loginDTO;
     const user = await this.prisma.user.findUnique({

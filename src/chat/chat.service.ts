@@ -15,7 +15,7 @@ export class ChatService {
   //Создание чата между двумя пользователями
   async createChatBetweenUsers(userId1: number, userId2: number) {
     //Проверка что пользователи не совпадают
-    if (userId1 == userId2) {
+    if (userId1 === userId2) {
       throw new ForbiddenException('Нельзя создать чат с самим собой');
     }
 
