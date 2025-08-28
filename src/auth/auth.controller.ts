@@ -121,6 +121,18 @@ export class AuthController {
     return this.authService.resetPassword(resetPassword);
   }
 
+  @ApiResponse(SwaggerResponses.created)
+  @ApiResponse(SwaggerResponses.badRequest)
+  @ApiResponse(SwaggerResponses.serverError)
+  @ApiOperation({
+    summary: 'Получить токен',
+    description: 'Функиция позволяет получить access_token из куки',
+  })
+  @Get('getToken')
+  async getToken(@Req() req: Request) {
+    return this.authService.getTokenFromCookies(req);
+  }
+
   @ApiOperation({
     summary: 'Обновить токены',
     description:
