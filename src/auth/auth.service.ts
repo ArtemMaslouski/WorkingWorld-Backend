@@ -45,7 +45,7 @@ export class AuthService {
   async getTokenFromCookies(@Req() req: Request) {
     try {
       const response = req.cookies['access_token'];
-      console.log(response);
+      console.log(typeof response);
       return response;
     } catch (error) {
       console.error(`Ошибка: `, error);

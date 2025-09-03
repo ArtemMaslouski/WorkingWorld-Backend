@@ -130,7 +130,8 @@ export class AuthController {
   })
   @Get('getToken')
   async getToken(@Req() req: Request) {
-    return this.authService.getTokenFromCookies(req);
+    const token = await this.authService.getTokenFromCookies(req);
+    return { access_token: token };
   }
 
   @ApiOperation({

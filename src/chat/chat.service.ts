@@ -56,18 +56,15 @@ export class ChatService {
   }
 
   //Создание сообщения в чате
-  async createMessage(data: CreateMessageDTO, token?: string) {
+  // chat.service.ts
+  async createMessage(data: CreateMessageDTO, senderId: number) {
     const { chatId, content } = data;
-    console.log(content);
-    const { sub: senderIdStr } = await this.userInfoService.verifyUser(token);
-    const senderId: number = Number(senderIdStr);
-    console.log(senderId);
 
-    //Проверка на то,что пользователь состоит в этом чате
+    // Проверка, что пользователь состоит в этом чате
     const participant = await this.prismaService.chatParticipant.findUnique({
       where: {
         userId_chatId: {
-          chatId: chatId,
+          chatId,
           userId: senderId,
         },
       },
