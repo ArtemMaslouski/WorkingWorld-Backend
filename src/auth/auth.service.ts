@@ -67,7 +67,6 @@ export class AuthService {
     if (!isValidPassword) {
       return res.status(401).send({ message: 'Неверный пароль' });
     }
-    console.log(user);
 
     return this.createToken(user, res);
   }
