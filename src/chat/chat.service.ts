@@ -172,4 +172,13 @@ export class ChatService {
 
     return chats;
   }
+
+  async getChatParticipants(chatId: number): Promise<number[]> {
+    const participants = await this.prismaService.chatParticipant.findMany({
+      where: { chatId },
+      select: { userId: true },
+    });
+
+    return participants.map((p) => p.userId);
+  }
 }
