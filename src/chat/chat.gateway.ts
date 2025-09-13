@@ -25,16 +25,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     try {
-      // Берём токен из auth
       const token = client.handshake.auth?.token;
       if (!token) throw new UnauthorizedException('JWT token is missing');
 
-      // Проверяем и декодируем JWT
       const payload = this.jwtService.verify(token);
       client.data.user = payload;
 
       this.logger.log(`Client connected: ${client.id} user ${payload.sub}`);
-      this.logger.debug('Handshake token:', token, typeof token);
     } catch (err) {
       this.logger.warn(`Connection refused: ${err.message}`);
       client.disconnect(true);
@@ -62,37 +59,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     try {
-      if (!client.data.user) {
-        throw new UnauthorizedException('Unauthorized user');
-      }
+      if (!client.data.user) throw new UnauthorizedException();
 
+      const senderId = Number(client.data.user.sub);
       const message = await this.chatService.createMessage(
         createMessageDTO,
-        client.data.user.sub,
+        senderId,
       );
-      const room = `chat_${createMessageDTO.chatId}`;
 
-      this.server.to(room).emit('newMessage', message);
+      // Получаем всех участников чата
+      const participants = await this.chatService.getChatParticipants(
+        createMessageDTO.chatId,
+      );
+
+      participants.forEach((userId) => {
+        const sock = Array.from(this.server.sockets.sockets.values()).find(
+          (s) => s.data.user?.sub === userId,
+        );
+        if (sock) sock.emit('newMessage', message);
+      });
 
       return { status: 'ok', message };
     } catch (error) {
       this.logger.error(`Error sending message: ${error.message}`);
       client.emit('errorMessage', { message: error.message });
       return { status: 'error', message: error.message };
-    }
-  }
-
-  @SubscribeMessage('sendInvitation')
-  handleSendInvitation(
-    @MessageBody() data: { userId: number; chatId: number },
-  ) {
-    const socketId = Array.from(this.server.sockets.sockets.values()).find(
-      (sock) => sock.data.user && sock.data.user.sub === data.userId,
-    )?.id;
-
-    if (socketId) {
-      this.server.to(socketId).emit('inviteToChat', { chatId: data.chatId });
-      this.logger.log(`Invited user ${data.userId} to chat ${data.chatId}`);
     }
   }
 }
