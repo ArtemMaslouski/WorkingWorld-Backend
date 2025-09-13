@@ -80,6 +80,14 @@ export class ChatService {
         senderId,
         content,
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            UserName: true,
+          },
+        },
+      },
     });
 
     return message;

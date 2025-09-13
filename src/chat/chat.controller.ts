@@ -60,7 +60,9 @@ export class ChatController {
   @Post('createMessage')
   async createMessage(@Req() req, @Body() createMessageDto: CreateMessageDTO) {
     const token = req.cookies['access_token'];
-    return this.chatService.createMessage(createMessageDto, token);
+    const user = this.userInfoService.verifyUser(token);
+    const senderId = Number(user.sub);
+    return this.chatService.createMessage(createMessageDto, senderId);
   }
 
   @ApiOperation({
