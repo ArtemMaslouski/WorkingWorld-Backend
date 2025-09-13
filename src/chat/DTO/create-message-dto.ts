@@ -7,11 +7,6 @@ export class CreateMessageDTO {
   @IsNotEmpty()
   chatId: number;
 
-  @ApiProperty({ description: 'id отправителя' })
-  @IsInt()
-  @IsNotEmpty()
-  senderId?: number;
-
   @ApiProperty({ description: 'Содержание сообщения' })
   @IsString()
   @IsNotEmpty()
