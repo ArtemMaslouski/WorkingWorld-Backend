@@ -58,6 +58,7 @@ export class ChatService {
   //Создание сообщения в чате
   // chat.service.ts
   async createMessage(data: CreateMessageDTO, senderId: number) {
+    console.log('Проверка сервера и контроллера');
     const { chatId, content } = data;
 
     // Проверка, что пользователь состоит в этом чате

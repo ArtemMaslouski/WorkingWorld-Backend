@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { Logger, UnauthorizedException } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { CreateMessageDTO } from './DTO/create-message-dto';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -27,9 +26,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const token = client.handshake.auth?.token;
       if (!token) throw new UnauthorizedException('JWT token is missing');
-
       const payload = this.jwtService.verify(token);
       client.data.user = payload;
+
+      // Присоединяем в приватную комнату пользователя для приглашений
+      client.join(`user_${payload.sub}`);
 
       this.logger.log(`Client connected: ${client.id} user ${payload.sub}`);
     } catch (err) {
@@ -49,41 +50,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const room = `chat_${data.chatId}`;
     client.join(room);
-    this.logger.log(`Client ${client.id} joined room ${room}`);
     client.emit('joinedChat', { chatId: data.chatId });
   }
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
-    @MessageBody() createMessageDTO: CreateMessageDTO,
+    @MessageBody() data: { chatId: number; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    try {
-      if (!client.data.user) throw new UnauthorizedException();
+    console.log('Проверка сокета');
+    if (!client.data.user) throw new UnauthorizedException('Unauthorized');
 
-      const senderId = Number(client.data.user.sub);
-      const message = await this.chatService.createMessage(
-        createMessageDTO,
-        senderId,
-      );
+    const senderId = Number(client.data.user.sub);
+    const message = await this.chatService.createMessage(
+      { chatId: data.chatId, content: data.content },
+      senderId,
+    );
 
-      // Получаем всех участников чата
-      const participants = await this.chatService.getChatParticipants(
-        createMessageDTO.chatId,
-      );
+    const room = `chat_${data.chatId}`;
+    this.server.to(room).emit('newMessage', message);
 
-      participants.forEach((userId) => {
-        const sock = Array.from(this.server.sockets.sockets.values()).find(
-          (s) => s.data.user?.sub === userId,
-        );
-        if (sock) sock.emit('newMessage', message);
-      });
+    return { status: 'ok', message };
+  }
 
-      return { status: 'ok', message };
-    } catch (error) {
-      this.logger.error(`Error sending message: ${error.message}`);
-      client.emit('errorMessage', { message: error.message });
-      return { status: 'error', message: error.message };
-    }
+  // Новый метод для приглашения пользователя в чат
+  async inviteUserToChat(userId: number, chatId: number) {
+    this.server.to(`user_${userId}`).emit('inviteToChat', { chatId });
   }
 }
